@@ -235,8 +235,8 @@ func _show_round_result(ev: Dictionary) -> void:
 			stages[2].append(ml)
 	var RelicManager = preload("res://engine/relic_manager.gd")
 	var is_relic: bool = RelicManager.is_relic_mode(state) and not bool(ev.get("finalRound", false))
-	var btn_txt := "FINAL RESULT" if ev["finalRound"] else (tr("BLACK MARKET 암시장 방문 ▸") if is_relic else "NEXT ROUND")
-	var btn := W.button(btn_txt, "primary", fz.call(22), Vector2((280.0 if is_relic else 240.0) * u, 52.0 * u))
+	var btn_txt := tr("최종 결과 ▸") if ev["finalRound"] else (tr("암시장 방문 ▸") if is_relic else tr("다음 라운드로 ▸"))
+	var btn := W.button(btn_txt, "primary", fz.call(22), Vector2((260.0 if is_relic else 220.0) * u, 52.0 * u))
 	btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	vb.add_child(btn)
 
@@ -421,13 +421,13 @@ func _ev_game_ended(ev: Dictionary) -> void:
 	if not new_achievements.is_empty():
 		var ach := VBoxContainer.new()
 		ach.add_theme_constant_override("separation", 2)
-		ach.add_child(W.label("★ 새 업적 달성!", int(18 * u), T.GOLD, "ui", HORIZONTAL_ALIGNMENT_CENTER, 800))
+		ach.add_child(W.label(tr("새 업적 달성!"), int(18 * u), T.GOLD, "ui", HORIZONTAL_ALIGNMENT_CENTER, 800))
 		for id in new_achievements:
 			ach.add_child(W.label("%s — %s" % [tr(Records.ACHIEVEMENTS[id][0]), tr(Records.ACHIEVEMENTS[id][1])], int(14 * u), T.TEXT, "ui", HORIZONTAL_ALIGNMENT_CENTER, 600))
 		vb.add_child(ach)
-	var again := W.button("한 판 더  ·  REMATCH (NEW GAME)", "primary", int(21 * u), Vector2(240.0 * u, 54.0 * u))
+	var again := W.button(tr("한 판 더"), "primary", int(21 * u), Vector2(200.0 * u, 54.0 * u))
 	again.name = "RematchButton"
-	var menu := W.button("MAIN MENU  ·  메인 메뉴", "secondary", int(18 * u), Vector2(170.0 * u, 54.0 * u))
+	var menu := W.button(tr("메인 메뉴"), "secondary", int(18 * u), Vector2(170.0 * u, 54.0 * u))
 	menu.name = "MenuButton"
 	btns.add_child(again)
 	btns.add_child(menu)

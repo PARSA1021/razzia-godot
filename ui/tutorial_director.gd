@@ -80,7 +80,7 @@ func _ready() -> void:
 	hb.add_child(vb)
 	var top := HBoxContainer.new()
 	top.add_theme_constant_override("separation", int(10 * _u()))
-	_name = W.label("SAL  · 정보원", int(15 * _u()), T.GOLD, "title", HORIZONTAL_ALIGNMENT_LEFT, 800)
+	_name = W.label(tr("정보원 살"), int(15 * _u()), T.GOLD, "title", HORIZONTAL_ALIGNMENT_LEFT, 800)
 	_name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	top.add_child(_name)
 	_step = W.label("", int(13 * _u()), T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_RIGHT, 700)
@@ -306,7 +306,7 @@ func _set_guide_width(w: float) -> void:
 	# a narrow box (beside a panel) drops the long labels so its minimum width really is `w`
 	_skip_btn.text = "건너뛰기" if narrow else "튜토리얼 건너뛰기"
 	_step.text = str(STEPS.get(_step_round, "")).get_slice(" ·", 0) if narrow else str(STEPS.get(_step_round, ""))
-	_name.text = "SAL" if narrow else "SAL  · 정보원"
+	_name.text = "Sal" if narrow else tr("정보원 살")
 	var tw := maxf(160.0, w - (92.0 + 16.0 + 46.0) * _u())
 	if not is_equal_approx(_text.custom_minimum_size.x, tw):
 		_text.custom_minimum_size = Vector2(tw, 0)

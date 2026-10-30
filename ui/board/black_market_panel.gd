@@ -65,7 +65,7 @@ func _build_ui() -> void:
 	title_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	top_bar.add_child(title_box)
 
-	var title_lbl := W.label("BLACK MARKET · 암시장", int(26 * u), T.GOLD, "title", HORIZONTAL_ALIGNMENT_LEFT, 800)
+	var title_lbl := W.label(tr("부두 암시장"), int(26 * u), T.GOLD, "title", HORIZONTAL_ALIGNMENT_LEFT, 800)
 	title_box.add_child(title_lbl)
 
 	var quote_lbl := W.label(
@@ -81,7 +81,7 @@ func _build_ui() -> void:
 	top_bar.add_child(right_box)
 
 	_reroll_btn = W.button(
-		tr("🔄 물건 새로고침 ($5,000)"), "secondary", int(13 * u), Vector2(170.0 * u, 40.0 * u)
+		tr("물품 새로고침 ($5,000)"), "secondary", int(13 * u), Vector2(170.0 * u, 40.0 * u)
 	)
 	_reroll_btn.pressed.connect(_on_reroll_pressed)
 	right_box.add_child(_reroll_btn)
@@ -114,13 +114,13 @@ func _build_ui() -> void:
 	vb.add_child(footer)
 
 	var hint_lbl := W.label(
-		tr("※ 구매한 유물은 이번 게임이 끝날 때까지 영구 지속됩니다."),
+		tr("※ 맺은 연줄은 이번 게임이 끝날 때까지 유지됩니다."),
 		int(13 * u), T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_LEFT, 500
 	)
 	hint_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	footer.add_child(hint_lbl)
 
-	_close_btn = W.button(tr("다음 라운드로 진행 (NEXT ROUND) ▸"), "primary", int(17 * u), Vector2(250.0 * u, 46.0 * u))
+	_close_btn = W.button(tr("다음 라운드로 ▸"), "primary", int(17 * u), Vector2(230.0 * u, 46.0 * u))
 	_close_btn.pressed.connect(_on_close_pressed)
 	footer.add_child(_close_btn)
 
@@ -183,11 +183,12 @@ func _build_relic_card(item: Dictionary) -> Control:
 
 	# Icon + Name
 	var head := HBoxContainer.new()
-	head.add_theme_constant_override("separation", int(6 * u))
+	head.add_theme_constant_override("separation", int(8 * u))
 	cv.add_child(head)
 
-	var icon_lbl := W.label(str(item.get("icon", "🎁")), int(22 * u), T.GOLD, "ui", HORIZONTAL_ALIGNMENT_LEFT, 700)
-	head.add_child(icon_lbl)
+	var icon_tex: Texture2D = T.relic_icon(str(item.get("id", "")))
+	var icon_img := W.icon_rect(icon_tex, Vector2(26.0 * u, 26.0 * u), T.GOLD)
+	head.add_child(icon_img)
 
 	var name_txt: String = tr(str(item.get("name_ko", item.get("name", ""))))
 	var name_lbl := W.label(name_txt, int(15 * u), T.GOLD if (is_owned or rarity == "RARE") else T.TEXT, "title", HORIZONTAL_ALIGNMENT_LEFT, 800)
@@ -213,15 +214,20 @@ func _build_relic_card(item: Dictionary) -> Control:
 	price_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	price_row.add_child(price_lbl)
 
-	if not is_owned and can_afford:
-		var remain: int = cur_m - price
-		var remain_lbl := W.label(tr("잔액 %s") % T.money(remain), int(11 * u), T.TEXT_DIM, "money", HORIZONTAL_ALIGNMENT_RIGHT, 500)
-		price_row.add_child(remain_lbl)
+	if not is_owned:
+		if can_afford:
+			var remain: int = cur_m - price
+			var remain_lbl := W.label(tr("잔액 %s") % T.money(remain), int(11 * u), T.TEXT_DIM, "money", HORIZONTAL_ALIGNMENT_RIGHT, 500)
+			price_row.add_child(remain_lbl)
+		else:
+			var deficit: int = price - cur_m
+			var deficit_lbl := W.label(tr("부족 %s") % T.money(deficit), int(11 * u), T.DANGER, "money", HORIZONTAL_ALIGNMENT_RIGHT, 600)
+			price_row.add_child(deficit_lbl)
 
 	# Action Button
 	var btn: Button
 	if is_owned:
-		btn = W.button(tr("✓ 보유 중"), "secondary", int(13 * u), Vector2(0, 36.0 * u))
+		btn = W.button(tr("보유 중"), "secondary", int(13 * u), Vector2(0, 36.0 * u))
 		btn.disabled = true
 	elif can_afford:
 		btn = W.button(tr("구매"), "primary", int(14 * u), Vector2(0, 36.0 * u))

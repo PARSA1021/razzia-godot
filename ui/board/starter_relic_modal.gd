@@ -46,11 +46,11 @@ func _build_ui() -> void:
 	panel.add_child(vb)
 
 	# Title & Subtitle
-	var title_lbl := W.label(tr("STARTING RELIC · 초기 유물 지원"), int(24 * u), T.GOLD, "title", HORIZONTAL_ALIGNMENT_CENTER, 800)
+	var title_lbl := W.label(tr("초기 연줄 지원"), int(24 * u), T.GOLD, "title", HORIZONTAL_ALIGNMENT_CENTER, 800)
 	vb.add_child(title_lbl)
 
 	var sub_lbl := W.label(
-		tr("시카고 거리에 나설 준비를 하십시오. 시작 유물 1종을 무료로 획득합니다."),
+		tr("시카고 거리에 나설 준비를 하십시오. 시작 연줄 1종을 무료로 맺습니다."),
 		int(13 * u), T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_CENTER, 500
 	)
 	sub_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD
@@ -97,9 +97,11 @@ func _build_starter_card(item: Dictionary) -> Control:
 	var tag_lbl := W.label(tag, int(11 * u), T.GOLD, "ui", HORIZONTAL_ALIGNMENT_CENTER, 700)
 	cv.add_child(tag_lbl)
 
-	# Icon
-	var icon_lbl := W.label(str(item.get("icon", "🎁")), int(32 * u), T.GOLD, "ui", HORIZONTAL_ALIGNMENT_CENTER, 700)
-	cv.add_child(icon_lbl)
+	# Icon (Monochrome vector from game-icons.net CC BY 3.0)
+	var icon_tex: Texture2D = T.relic_icon(str(item.get("id", "")))
+	var icon_img := W.icon_rect(icon_tex, Vector2(36.0 * u, 36.0 * u), T.GOLD)
+	icon_img.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	cv.add_child(icon_img)
 
 	# Name
 	var name_txt: String = tr(str(item.get("name_ko", item.get("name", ""))))
@@ -116,10 +118,10 @@ func _build_starter_card(item: Dictionary) -> Control:
 	cv.add_child(W.rule(u, 1))
 
 	# Free Badge
-	var free_lbl := W.label(tr("무료 지급 (FREE)"), int(13 * u), T.GOLD, "money", HORIZONTAL_ALIGNMENT_CENTER, 700)
+	var free_lbl := W.label(tr("무료 지원"), int(13 * u), T.GOLD, "money", HORIZONTAL_ALIGNMENT_CENTER, 700)
 	cv.add_child(free_lbl)
 
-	var btn := W.button(tr("선택 (SELECT)"), "primary", int(14 * u), Vector2(0, 38.0 * u))
+	var btn := W.button(tr("선택"), "primary", int(14 * u), Vector2(0, 38.0 * u))
 	btn.name = "SelectButton"
 	btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var rid: String = item["id"]

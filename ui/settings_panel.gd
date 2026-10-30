@@ -54,7 +54,7 @@ static func build(u: float, ctx: Dictionary) -> VBoxContainer:
 		for b in lgseg.get_children():
 			if b is Button:
 				b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED     # each language names itself
-		g.add_child(_row(u, "언어 · Language", lgseg, false))
+		g.add_child(_row(u, "언어", lgseg))
 	if menu:
 		g.add_child(_row(u, "연출 속도", W.segmented(["보통 (1.0x)", "빠르게 (2.0x)"], 1 if Settings.speed_name == "FAST" else 0, func(i):
 			Settings.speed_name = "FAST" if i == 1 else "NORMAL"

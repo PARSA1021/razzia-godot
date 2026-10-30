@@ -379,7 +379,7 @@ func _build_tutorial_card() -> Control:
 	btn_col.add_theme_constant_override("separation", 6)
 	btn_col.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	
-	var tut_text := "튜토리얼 다시 하기  ·  Sal" if Settings.tutorial_done else "튜토리얼  ·  Sal과 3라운드"
+	var tut_text := tr("튜토리얼 복습") if Settings.tutorial_done else tr("튜토리얼 시작")
 	var tut_btn := W.button(tut_text, "primary" if not Settings.tutorial_done else "secondary", 14, Vector2(175, 42))
 	tut_btn.name = "TutorialButton"
 	tut_btn.pressed.connect(func():

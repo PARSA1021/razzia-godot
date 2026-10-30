@@ -593,7 +593,7 @@ func begin_duel(ev: Dictionary) -> void:
 		plaque.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 		var pv := VBoxContainer.new()
 		pv.add_theme_constant_override("separation", -2)
-		pv.add_child(W.label("POT · 이긴 사람이 모두 가져갑니다", _fs(12), T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_CENTER, 700))
+		pv.add_child(W.label(tr("판돈 (승자 독식)"), _fs(12), T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_CENTER, 700))
 		_pot_label = W.label(T.money(stake), _fs(40), T.GOLD, "money", HORIZONTAL_ALIGNMENT_CENTER, 800)
 		pv.add_child(_pot_label)
 		plaque.add_child(pv)
@@ -860,7 +860,7 @@ func ask_continue() -> void:
 		return                                  # one confirmation prompt per duel
 	duel_phase = DuelPhase.WAITING
 	_clear(_action_box)
-	var b := W.button("결과 확인 · 계속", "primary", _fs(20), Vector2(_fs(300), _fs(52)))
+	var b := W.button(tr("결과 확인 (계속)"), "primary", _fs(20), Vector2(_fs(300), _fs(52)))
 	b.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	_action_box.add_child(b)
 	b.pressed.connect(func():
@@ -916,8 +916,8 @@ func _finish_close() -> void:
 
 func ask_roll() -> void:
 	_clear(_action_box)
-	set_status("내 차례예요. 버튼을 눌러 주사위를 굴리세요.")
-	var b := W.button("ROLL THE DIE  ·  주사위 굴리기", "primary", _fs(20), Vector2(_fs(330), _fs(56)))
+	set_status(tr("내 차례예요. 버튼을 눌러 주사위를 굴리세요."))
+	var b := W.button(tr("주사위 던지기"), "primary", _fs(20), Vector2(_fs(300), _fs(56)))
 	b.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	_action_box.add_child(b)
 	b.pressed.connect(func(): decided.emit(true), CONNECT_ONE_SHOT)
@@ -984,8 +984,8 @@ func ask_response(view: Dictionary) -> String:
 			if is_instance_valid(bt) and is_instance_valid(v):
 				bt.custom_minimum_size.y = maxf(bt.custom_minimum_size.y, v.get_combined_minimum_size().y + 16.0)).call_deferred()
 		return bt
-	var acc: Button = mk.call("ACCEPT", "수락  ACCEPT", T.money(offer), "지금 바로 받는 확실한 금액", "위험 없음", offer > ev_duel, T.OK)
-	var duel: Button = mk.call("DUEL", "결투  DUEL", T.t("승률 %d%%") % int(round(chance * 100.0)), T.t("이기면 %s · 지면 $0") % T.money(pot), T.t("기대값 약 %s") % T.money(ev_duel), duel_better, T.DANGER)
+	var acc: Button = mk.call("ACCEPT", tr("수락"), T.money(offer), tr("지금 바로 받는 확실한 금액"), tr("위험 없음"), offer > ev_duel, T.OK)
+	var duel: Button = mk.call("DUEL", tr("결투"), T.t("승률 %d%%") % int(round(chance * 100.0)), T.t("이기면 %s · 지면 $0") % T.money(pot), T.t("기대값 약 %s") % T.money(ev_duel), duel_better, T.DANGER)
 	acc.text = "ACCEPT"
 	duel.text = "DUEL"
 	acc.add_theme_color_override("font_color", Color(0, 0, 0, 0))             # the card's own labels carry the text; these keep the button text searchable
@@ -1143,7 +1143,7 @@ func ask_proposal(view: Dictionary) -> Dictionary:
 	presets.add_child(sugg_btn)
 	presets.add_child(even_btn)
 	presets.add_child(greedy_btn)
-	var ok_btn := W.button("제안하기  MAKE OFFER", "primary", _fs(20), Vector2(_fs(300), _fs(52)))
+	var ok_btn := W.button(tr("제안 전달"), "primary", _fs(20), Vector2(_fs(300), _fs(52)))
 	ok_btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	_action_box.add_child(ok_btn)
 	var apply := func(vals: Dictionary) -> void:
