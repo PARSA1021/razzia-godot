@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Martini Glass -->
+  <polygon points="12,14 52,14 32,38" fill="#ffffff" />
+  <rect x="30" y="38" width="4" height="18" fill="#ffffff" />
+  <ellipse cx="32" cy="56" rx="14" ry="3" fill="#ffffff" />
+  <!-- Olive & Pick -->
+  <line x1="22" y1="8" x2="38" y2="28" stroke="#ffffff" stroke-width="2" stroke-linecap="round" />
+  <circle cx="30" cy="18" r="4.5" fill="#ffffff" />
+</svg>

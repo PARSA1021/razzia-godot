@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Chicago Police Star Shield Badge -->
+  <!-- Outer Shield Crest -->
+  <path d="M32,4 L52,12 C52,34 32,58 32,58 C32,58 12,34 12,12 Z" fill="#ffffff" />
+  <!-- Inner Cutout -->
+  <path d="M32,8 L48,15 C48,32 32,52 32,52 C32,52 16,32 16,15 Z" fill="#000000" />
+  <!-- Central 5-Point Police Star -->
+  <polygon points="32,16 35.5,26 46,26 37.5,32.5 41,43 32,36.5 23,43 26.5,32.5 18,26 28.5,26" fill="#ffffff" />
+  <circle cx="32" cy="29.5" r="4.5" fill="#000000" />
+  <circle cx="32" cy="29.5" r="2.5" fill="#ffffff" />
+</svg>

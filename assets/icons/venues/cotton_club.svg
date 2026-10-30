@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Trumpet (Horn) -->
+  <!-- Flared Bell -->
+  <path d="M42,26 Q52,24 58,16 L58,48 Q52,40 42,38 Z" fill="#ffffff" />
+  <!-- Main Body Tubes -->
+  <rect x="14" y="29" width="30" height="6" rx="2" fill="#ffffff" />
+  <rect x="8" y="30" width="8" height="4" fill="#ffffff" />
+  <!-- Mouthpiece -->
+  <polygon points="6,28 10,30 10,34 6,36" fill="#ffffff" />
+  <!-- 3 Valves -->
+  <rect x="24" y="18" width="3.5" height="13" rx="1" fill="#ffffff" />
+  <rect x="29" y="18" width="3.5" height="13" rx="1" fill="#ffffff" />
+  <rect x="34" y="18" width="3.5" height="13" rx="1" fill="#ffffff" />
+  <!-- Valve caps -->
+  <circle cx="25.75" cy="17" r="2.5" fill="#ffffff" />
+  <circle cx="30.75" cy="17" r="2.5" fill="#ffffff" />
+  <circle cx="35.75" cy="17" r="2.5" fill="#ffffff" />
+  <!-- Lower Loop -->
+  <path d="M18,34 C18,44 38,44 38,34" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+</svg>

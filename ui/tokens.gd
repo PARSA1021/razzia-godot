@@ -152,14 +152,18 @@ static func _load_font_file(path: String) -> FontFile:
 	return null
 
 
-## kind: "title" (Cinzel) | "money" (Playfair Display) | "stamp" (Rye) | "ui" (Noto Sans KR)
+## kind: "title" (Stint Ultra Expanded) | "money" (Playfair Display) | "stamp" (Special Elite) | "ui" (Noto Sans KR) | "dialogue" (Lora + Hahmlet)
 static func font(kind: String, weight: int = 600) -> Font:
 	var key := "%s-%d" % [kind, weight]
 	if _fonts.has(key):
 		return _fonts[key]
 	var paths := {
-		"title": "res://assets/fonts/Cinzel.ttf", "money": "res://assets/fonts/PlayfairDisplay.ttf",
-		"stamp": "res://assets/fonts/Rye-Regular.ttf", "ui": "res://assets/fonts/NotoSansKR.ttf",
+		"title": "res://assets/fonts/StintUltraExpanded-Regular.ttf",
+		"money": "res://assets/fonts/PlayfairDisplay.ttf",
+		"stamp": "res://assets/fonts/SpecialElite.ttf",
+		"ui": "res://assets/fonts/NotoSansKR.ttf",
+		"dialogue": "res://assets/fonts/Lora.ttf",
+		"story": "res://assets/fonts/Lora.ttf",
 	}
 	var base := _load_font_file(paths.get(kind, paths["ui"]))
 	var f: Font
@@ -168,9 +172,20 @@ static func font(kind: String, weight: int = 600) -> Font:
 	else:
 		var fv := FontVariation.new()
 		fv.base_font = base
-		if kind != "stamp":
+		if kind == "money":
+			fv.opentype_features = {"tnum": 1}
+		if kind == "ui":
 			fv.variation_opentype = {_tag("wght"): weight}
-		if kind != "ui":
+		elif kind in ["dialogue", "story"]:
+			var hahmlet := _load_font_file("res://assets/fonts/Hahmlet-Subset.ttf")
+			var kr := _load_font_file(paths["ui"])
+			var fbs: Array[Font] = []
+			if hahmlet != null:
+				fbs.append(hahmlet)
+			if kr != null:
+				fbs.append(kr)
+			fv.fallbacks = fbs
+		elif kind != "ui":
 			var kr := _load_font_file(paths["ui"])
 			if kr != null:
 				fv.fallbacks = [kr]
@@ -182,6 +197,41 @@ static func font(kind: String, weight: int = 600) -> Font:
 static func _tag(name: String) -> int:
 	var ts := TextServerManager.get_primary_interface()
 	return ts.name_to_tag(name) if ts != null else 0
+
+
+## ---- Vector Icons: 6 venues, police badge, and money clip ----
+const VENUE_ICONS := {
+	"COLIBRI": "res://assets/icons/venues/colibri.svg",
+	"COTTON_CLUB": "res://assets/icons/venues/cotton_club.svg",
+	"HAVANA_BAR": "res://assets/icons/venues/havana_bar.svg",
+	"THE_JUNGLE": "res://assets/icons/venues/the_jungle.svg",
+	"LINCOLNS": "res://assets/icons/venues/lincolns.svg",
+	"JAZZ_HOUSE": "res://assets/icons/venues/jazz_house.svg",
+}
+static var _icon_tex := {}
+
+static func _load_tex_file(path: String) -> Texture2D:
+	if _icon_tex.has(path):
+		return _icon_tex[path]
+	var tex = load(path) if ResourceLoader.exists(path) else null
+	if not (tex is Texture2D):
+		var real_p := ProjectSettings.globalize_path(path)
+		if FileAccess.file_exists(path) or FileAccess.file_exists(real_p):
+			var img := Image.load_from_file(real_p)
+			if img != null:
+				tex = ImageTexture.create_from_image(img)
+	_icon_tex[path] = tex
+	return tex
+
+static func venue_icon(bar_id: String) -> Texture2D:
+	var p: String = VENUE_ICONS.get(bar_id, "")
+	return _load_tex_file(p) if p != "" else null
+
+static func police_icon() -> Texture2D:
+	return _load_tex_file("res://assets/icons/police_badge.svg")
+
+static func money_clip_icon() -> Texture2D:
+	return _load_tex_file("res://assets/icons/money_clip.svg")
 
 
 ## ---- illustrations (assets/art): venue posters + gambler / police portraits ----

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Havana Cigar -->
+  <!-- Cigar Body at angle -->
+  <g transform="rotate(-30 32 32)">
+    <!-- Main Cylinder -->
+    <rect x="14" y="26" width="36" height="12" rx="4" fill="#ffffff" />
+    <!-- Rounded Cap end -->
+    <path d="M14,26 C10,26 8,32 8,32 C8,32 10,38 14,38 Z" fill="#ffffff" />
+    <!-- Ash / Lit Tip -->
+    <path d="M50,26 L55,27 L53,32 L56,37 L50,38 Z" fill="#ffffff" opacity="0.8" />
+    <!-- Cigar Band (Dark cutout) -->
+    <rect x="22" y="24" width="7" height="16" rx="2" fill="#000000" />
+    <rect x="23" y="25" width="5" height="14" rx="1" fill="#ffffff" />
+  </g>
+  <!-- Smoke wisps -->
+  <path d="M46,18 C48,14 54,14 52,10 C50,6 56,4 58,2" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" />
+</svg>
