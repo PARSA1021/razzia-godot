@@ -192,10 +192,25 @@ const FAN_DEG := 5.0
 
 ## ===================================================================== helpers
 
+func _is_fast_forward_held() -> bool:
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		return true
+	if Input.is_action_pressed("ui_accept") or Input.is_action_pressed("ui_select") or Input.is_action_pressed("skip_anim"):
+		return true
+	if Input.is_key_pressed(KEY_SPACE) or Input.is_key_pressed(KEY_ENTER):
+		return true
+	for pad in Input.get_connected_joypads():
+		if Input.is_joy_button_pressed(pad, JOY_BUTTON_A) or Input.is_joy_button_pressed(pad, JOY_BUTTON_X) or Input.is_joy_button_pressed(pad, JOY_BUTTON_RIGHT_SHOULDER) or Input.get_joy_axis(pad, JOY_AXIS_TRIGGER_RIGHT) > 0.5:
+			return true
+	return false
+
+
 func _tween() -> Tween:
 	var tw := create_tween()
 	if skip or Settings.reduce_motion:
 		tw.set_speed_scale(100.0)
+	elif Settings.speed_name == "FAST":
+		tw.set_speed_scale(2.0)
 	return tw
 
 
@@ -205,7 +220,10 @@ func _wait(sec: float) -> void:
 		await get_tree().process_frame
 		if get_tree().paused:
 			continue                      # the pause panel is open: the clock stops with the table
-		t -= get_process_delta_time()
+		var dt := get_process_delta_time()
+		if _is_fast_forward_held():
+			dt *= 4.0
+		t -= dt
 
 
 var _now_fn: Callable = Callable()        # how the current narration line was built (re-run when the language changes)

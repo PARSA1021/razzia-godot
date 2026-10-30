@@ -3,6 +3,24 @@ extends "res://ui/board/board_fx.gd"
 ## Part of the board, split by topic (Phase 27). The final class is ui/game_screen.gd; each file extends the
 ## previous one, so every part sees the shared state and helpers below it. Presentation only: the engine decides.
 
+## Centralized pacing and animation timing constants (Task 2)
+const TIMINGS := {
+	"EMPTY_BAR": 0.08,             # 빈 술집: 0.05~0.1초 어두워지는 효과 후 바로 다음으로
+	"SOLO_RESOLVE": 0.10,          # 혼자 들어간 술집 판정 연출
+	"SOLO_AWARD": 0.10,            # 혼자 들어간 술집 돈 획득 연출 (합계 <= 0.2초)
+	"RAZZIA_NO_ZOCKER": 1.10,      # 허탕 단속 (기존 유지)
+	"RAZZIA_SOLE": 0.50,           # 단속 보상 (기존 유지)
+	"CONTESTED_RESOLVE": 0.40,     # 충돌/협상/결투 정리 (기존 유지)
+	"NEGO_START": 1.30,            # 협상 시작 (기존 유지)
+	"PROPOSAL_MADE": 0.90,         # 제안 (기존 유지)
+	"PROPOSAL_ACCEPTED": 0.55,     # 수락 (기존 유지)
+	"DUEL_CALLED": 0.55,           # 결투 선언 (기존 유지)
+	"DICE_ROLLED": 0.40,           # 주사위 굴림 (기존 유지)
+	"DUEL_RESOLVE_AI": 1.30,       # AI 결투 결과 (기존 유지)
+	"AWARD_NORMAL": 0.40,          # 일반 돈 지급 연출 (기존 유지)
+	"AWARD_NEGO": 0.60,            # 협상 타결 돈 지급 연출 (기존 유지)
+}
+
 
 ## ===================================================================== event replay
 
@@ -41,23 +59,23 @@ func _play_event(ev: Dictionary) -> void:
 			Audio.play("offer")
 			nego.set_proposal(ev)
 			nego.say(ev["proposerId"], "propose", int(ev.get("seq", 0)))
-			await _wait(0.9)
+			await _wait(TIMINGS.PROPOSAL_MADE)
 		"PROPOSAL_ACCEPTED":
 			Audio.play("accept")
 			nego.set_mark(ev["playerId"], "ACCEPT")
 			nego.say(ev["playerId"], "accept", int(ev.get("seq", 0)))
-			await _wait(0.55)
+			await _wait(TIMINGS.PROPOSAL_ACCEPTED)
 		"DUEL_CALLED":
 			Audio.play("duel")
 			nego.set_mark(ev["playerId"], "DUEL")
 			nego.say(ev["playerId"], "duel", int(ev.get("seq", 0)))
-			await _wait(0.55)
+			await _wait(TIMINGS.DUEL_CALLED)
 		"DUEL_STARTED":
 			await _ev_duel_started(ev)
 		"DICE_ROLLED":
 			Audio.play("dice")
 			await nego.set_rolls(ev)
-			await _wait(0.4)
+			await _wait(TIMINGS.DICE_ROLLED)
 		"DUEL_RESOLVED":
 			if _is_me(ev["playerA"]) or _is_me(ev["playerB"]):
 				Audio.play("duel_win" if _is_me(ev["winnerId"]) else "duel_lose")
@@ -78,7 +96,7 @@ func _play_event(ev: Dictionary) -> void:
 							_scene_big_duels += 1
 							await _mid_scene("duel", {"actor": pl, "ai_won": ev["winnerId"] == opp_id, "ctx": {"bar": T.bar_name(str(ev["barId"])), "pot": T.money(pot)}})
 			else:
-				await _wait(1.3)
+				await _wait(TIMINGS.DUEL_RESOLVE_AI)
 		"MONEY_AWARDED":
 			await _ev_money_awarded(ev)
 		"ROUND_ENDED":
@@ -278,6 +296,14 @@ func _ev_bar_resolved(ev: Dictionary) -> void:
 			_round_reason[id] = "합의 분배" if str(ev.get("outcome", "")) == "DEAL" else "결투 결과"
 	match kind:
 		"EMPTY":
+			# 빈 술집(카드 0장): 카메라 이동 없이 0.05~0.1초 살짝 어두워지는 효과만, 바로 다음으로
+			if bar_views.has(id) and is_instance_valid(bar_views[id]):
+				var bv: Control = bar_views[id]
+				var orig_col: Color = bv.modulate
+				bv.modulate = Color(0.65, 0.65, 0.65, 0.85)
+				await _wait(TIMINGS.EMPTY_BAR)
+				if is_instance_valid(bv):
+					bv.modulate = orig_col
 			return
 		"RAZZIA_NO_ZOCKER":
 			bar_views[id].highlight = true
@@ -289,17 +315,17 @@ func _ev_bar_resolved(ev: Dictionary) -> void:
 				_now_live(func(): return tr("🚨 RAZZIA 허탕 · %s에 도박꾼이 없어 %s의 단속 실패 · 판돈 %s 유지") % [T.bar_name(id), _nm(cops[0]), T.money(int(ev.get("money", 0)))])
 			else:
 				_now_live(func(): return tr("도박꾼이 없어 돈이 그대로 남습니다"))
-			await _wait(1.1)
+			await _wait(TIMINGS.RAZZIA_NO_ZOCKER)
 			bar_views[id].highlight = false
 		"SINGLE_ZOCKER":
-			# the reason is announced here; the MONEY_AWARDED that follows only animates the amount (no second sentence)
+			# 혼자 들어간 술집(충돌 없음): 0.2초 이내로 짧게, 돈 획득 연출만
 			bar_views[id].highlight = true
 			_now_live(func(): return tr("%s · 단독 도박꾼 — %s 가 %s 를 가져갑니다") % [T.bar_name(id), _nm(ev["winnerId"]), T.money(int(ev["money"]))])
-			await _wait(0.5)
+			await _wait(TIMINGS.SOLO_RESOLVE)
 		"RAZZIA_SOLE_CLAIMANT":
 			bar_views[id].highlight = true
 			_now_live(func(): return tr("RAZZIA · %s — %s 가 단속 보상으로 %s 를 가져갑니다") % [T.bar_name(id), _nm(ev["winnerId"]), T.money(int(ev["money"]))])
-			await _wait(0.5)
+			await _wait(TIMINGS.RAZZIA_SOLE)
 			_set_felt("")
 		_:
 			nego.close()
@@ -307,7 +333,7 @@ func _ev_bar_resolved(ev: Dictionary) -> void:
 			_set_felt("")
 			dim.visible = false
 			_now_live(func(): return "%s · %s" % [T.bar_name(id), tr(str(_round_reason.get(id, "정리 완료")))])
-			await _wait(0.4)
+			await _wait(TIMINGS.CONTESTED_RESOLVE)
 			bar_views[id].highlight = false
 
 
@@ -329,7 +355,7 @@ func _ev_negotiation_started(ev: Dictionary) -> void:
 	dim.color = Color(0, 0, 0, 0.55)
 	dim.visible = not nego._bottom
 	_now_live(func(): return tr("협상 · %s %s") % [T.bar_name(tid), T.money(int(ev["prize"]))])
-	await _wait(1.3)
+	await _wait(TIMINGS.NEGO_START)
 
 
 func _ev_duel_started(ev: Dictionary) -> void:
@@ -368,8 +394,12 @@ func _ev_money_awarded(ev: Dictionary) -> void:
 		nego.set_status(tr("%s 님이 %s 를 받습니다.") % [_nm(pid) + ("" if str(names.get(pid, "")) == "나" or not _is_me(pid) else tr(" (나)")), T.money(amount)])      # result inside the panel
 	elif not _round_reason.has(id):
 		_now_live(func(): return "%s  +%s  ←  %s" % [_nm(pid) + _me_tag(pid), T.money(amount), T.bar_name(id)])
-	_set_bar_money(id, int(disp["bar_money"][id]) - amount, 0.45)
-	_set_player_money(pid, int(disp["money"][pid]) + amount, 0.5)
+	var is_solo := not negotiated and str(_round_reason.get(id, "")) == "단독 도박꾼"
+	var bar_dur := 0.15 if is_solo else 0.45
+	var pl_dur := 0.18 if is_solo else 0.50
+	_set_bar_money(id, int(disp["bar_money"][id]) - amount, bar_dur)
+	_set_player_money(pid, int(disp["money"][pid]) + amount, pl_dur)
 	_pop(chips.get(pid))
 	_pop(bv)
-	await _wait(0.6 if negotiated else 0.4)
+	var wait_dur: float = TIMINGS.AWARD_NEGO if negotiated else (TIMINGS.SOLO_AWARD if is_solo else TIMINGS.AWARD_NORMAL)
+	await _wait(wait_dur)
