@@ -14,7 +14,7 @@ var bar_id := ""
 var mode := "card"
 var money := 0                   # target amount (engine truth as last replayed)
 var shown := 0.0                 # animated amount
-var money_cards := 0             # number of money cards lying here (the green pills)
+var money_cards := 0: set = _set_money_cards
 var highlight := false: set = _set_highlight
 var clickable := false: set = _set_clickable
 var flash := 0.0: set = _set_flash
@@ -40,7 +40,18 @@ func _init() -> void:
 
 func setup(p_bar_id: String) -> void:
 	bar_id = p_bar_id
+	_update_tooltip()
 	queue_redraw()
+
+
+func _set_money_cards(v: int) -> void:
+	money_cards = v
+	_update_tooltip()
+	queue_redraw()
+
+
+func _update_tooltip() -> void:
+	tooltip_text = tr("돈 카드 %d장") % money_cards
 
 
 func _set_highlight(v: bool) -> void:
@@ -242,7 +253,7 @@ func mini_rects(n: int) -> Array:
 		var k := size.x / 190.0
 		var gap := 5.0 * k
 		var top := 36.0 * k
-		var bottom := venue_h - 56.0 * k
+		var bottom := venue_h - 72.0 * k
 		var reg_h := maxf(10.0, bottom - top)
 		var cols := 1 if n == 1 else 2
 		var rows := ceili(float(n) / float(cols))
@@ -430,8 +441,10 @@ func _draw_card_mode() -> void:
 	draw_string(tf, Vector2((w - tw) / 2.0 + 1, 22.0 * k + 1), title, HORIZONTAL_ALIGNMENT_LEFT, -1, hs, Color(0, 0, 0, 0.85))
 	draw_string(tf, Vector2((w - tw) / 2.0, 22.0 * k), title, HORIZONTAL_ALIGNMENT_LEFT, -1, hs, T.GOLD)
 
-	# 5. Recessed Poster Artwork Window
-	var art := Rect2(7 * k, 33 * k, w - 14 * k, vh - 33 * k - 54 * k)
+	# 5. Recessed Poster Artwork Window (reduced to elevate pot hierarchy)
+	var vault_h := 66.0 * k
+	var vault_rect := Rect2(6 * k, vh - vault_h - 4 * k, w - 12 * k, vault_h)
+	var art := Rect2(7 * k, 33 * k, w - 14 * k, vh - 33 * k - vault_h - 8 * k)
 	var poster: Texture2D = T.art("bar", bar_id)
 	if poster != null:
 		T.draw_cover(self, poster, art, 0.38)
@@ -447,42 +460,59 @@ func _draw_card_mode() -> void:
 			var from := Vector2(c.x, art.end.y)
 			var to := Vector2(clampf(p.x, art.position.x, art.end.x), clampf(p.y, art.position.y, art.end.y))
 			draw_line(from, to, Color(col.lightened(0.35), 0.09), maxf(1.0, 1.4 * k))
-		_draw_icon(c, minf(art.size.x, art.size.y) * 0.30, col)
+		_draw_icon(c, minf(art.size.x, art.size.y) * 0.32, col)
 
 	# Art bevel frame with inner depth
 	draw_rect(art, Color(T.BRASS, 0.9), false, maxf(1.0, 1.4 * k))
 	draw_rect(art.grow(-1.2 * k), Color(0, 0, 0, 0.4), false, maxf(1.0, 1.0 * k))
 
-	# 6. Casino Vault / Pot Plaque (Money + Cash Tokens)
-	var vault_rect := Rect2(6 * k, vh - 52 * k, w - 12 * k, 46 * k)
-	_sb(Color("0d0a07"), Color(T.BRASS, 0.7), maxf(1.0, 1.4 * k), 5.0 * k).draw(get_canvas_item(), vault_rect)
-	draw_rect(vault_rect.grow(-2.0 * k), Color(col, 0.14))
+	# 6. Casino Vault / Pot Plaque (Headline Pot Amount + Money Clip Badge)
+	_sb(Color("0d0a07"), Color(T.BRASS, 0.75), maxf(1.0, 1.4 * k), 5.0 * k).draw(get_canvas_item(), vault_rect)
+	draw_rect(vault_rect.grow(-2.0 * k), Color(col, 0.15))
 
 	# Vault top accent line
-	draw_line(Vector2(vault_rect.position.x + 4 * k, vault_rect.position.y + 1), Vector2(vault_rect.end.x - 4 * k, vault_rect.position.y + 1), Color(T.GOLD, 0.45), maxf(1.0, k))
+	draw_line(Vector2(vault_rect.position.x + 4 * k, vault_rect.position.y + 1), Vector2(vault_rect.end.x - 4 * k, vault_rect.position.y + 1), Color(T.GOLD, 0.5), maxf(1.0, k))
 
+	# Pot Amount: Steam Deck 28px Headline tier
 	var mf := T.font("money", 800)
-	var ms := 23.0 * k
+	var ms := int(maxf(24.0, 28.0 * k))
 	var money_str := T.money(int(round(shown)))
-	_text(money_str, Vector2(0, vh - 26.0 * k), mf, ms, T.GOLD.lerp(Color.WHITE, flash * 0.6), w, HORIZONTAL_ALIGNMENT_CENTER)
-	_draw_pills(Vector2(w / 2.0, vh - 13.0 * k), k, true)
+	_text(money_str, Vector2(0, vault_rect.position.y + 30.0 * k), mf, ms, T.GOLD.lerp(Color.WHITE, flash * 0.6), w, HORIZONTAL_ALIGNMENT_CENTER)
+
+	# Money clip badge with card count
+	_draw_money_badge(Vector2(w / 2.0, vault_rect.position.y + 50.0 * k), k, true)
 
 
-func _draw_pills(center: Vector2, k: float, centered: bool) -> void:
-	var n := mini(money_cards, 7)
-	var pw := 15.0 * k
-	var ph := 6.5 * k
-	var gap := 4.5 * k
-	var total := n * pw + maxi(0, n - 1) * gap
-	var x := center.x - total / 2.0 if centered else center.x
-	for i in range(n):
-		var pr := Rect2(x + i * (pw + gap), center.y - ph * 0.5, pw, ph)
-		# Emerald cash ingot: dark shadow, emerald body, emerald-glow border
-		_sb(Color("196f3d"), Color("2ecc71"), maxf(1.0, 1.0 * k), 2.5 * k).draw(get_canvas_item(), pr)
-		# Subtle gloss line across top of ingot
-		draw_line(Vector2(pr.position.x + 2 * k, pr.position.y + 1.2 * k), Vector2(pr.end.x - 2 * k, pr.position.y + 1.2 * k), Color("a9dfbf", 0.75), maxf(1.0, k))
-	if money_cards > 7:
-		_text("+%d" % (money_cards - 7), Vector2(x + total + 4 * k, center.y + 4 * k), T.font("ui", 700), 9.5 * k, Color("2ecc71"))
+## Banknote strap / money clip badge showing number of money cards
+func _draw_money_badge(center: Vector2, k: float, centered: bool) -> void:
+	var count_str := "%d" % money_cards
+	var uf := T.font("money", 700)
+	var us := maxf(11.0, 12.0 * k)
+	var tw := uf.get_string_size(count_str, HORIZONTAL_ALIGNMENT_LEFT, -1, int(us)).x
+	var icon_w := 14.0 * k
+	var icon_h := 14.0 * k
+	var gap := 4.0 * k
+	var pad_x := 6.0 * k
+	var bw := pad_x * 2.0 + icon_w + gap + tw
+	var bh := maxf(16.0, 18.0 * k)
+	var bx := center.x - bw * 0.5 if centered else center.x
+	var by := center.y - bh * 0.5
+	var badge_rect := Rect2(bx, by, bw, bh)
+
+	# Banknote badge pill
+	_sb(Color("0c140e", 0.92), Color("2e7d44", 0.75), maxf(1.0, k), bh * 0.5).draw(get_canvas_item(), badge_rect)
+
+	# Money clip vector icon
+	var icon_tex: Texture2D = T.money_clip_icon()
+	var icon_rect := Rect2(bx + pad_x, center.y - icon_h * 0.5, icon_w, icon_h)
+	if icon_tex != null:
+		draw_texture_rect(icon_tex, icon_rect, false, Color("58d68d"))
+	else:
+		draw_rect(icon_rect, Color("58d68d"), false, 1.0)
+
+	# Count text
+	var text_pos := Vector2(bx + pad_x + icon_w + gap, center.y + us * 0.38)
+	draw_string(uf, text_pos, count_str, HORIZONTAL_ALIGNMENT_LEFT, -1, int(us), Color("e8f8f5"))
 
 
 func _draw_row_mode() -> void:
@@ -503,18 +533,23 @@ func _draw_row_mode() -> void:
 	else:
 		draw_polygon(PackedVector2Array([plate.position, Vector2(plate.end.x, plate.position.y), plate.end, Vector2(plate.position.x, plate.end.y)]),
 			PackedColorArray([Color(col, 0.55).darkened(0.4), Color(col, 0.55).darkened(0.4), Color("0a0705"), Color("0a0705")]))
-		_draw_icon(plate.get_center(), plate.size.x * 0.30, col)
+		_draw_icon(plate.get_center(), plate.size.x * 0.32, col)
 	draw_rect(plate, Color(T.BRASS, 0.9), false, 1.4)
 	var x0 := plate.end.x + 14.0
 	_text(T.bar_name(bar_id), Vector2(x0, h * 0.40), T.font("title", 700), 19.0 * k, T.GOLD)
-	_text(T.money(int(round(shown))), Vector2(x0, h * 0.82), T.font("money", 800), 24.0 * k, T.GOLD.lerp(Color.WHITE, flash * 0.6))
+	_text(T.money(int(round(shown))), Vector2(x0, h * 0.82), T.font("money", 800), 26.0 * k, T.GOLD.lerp(Color.WHITE, flash * 0.6))
 	var name_w := T.font("title", 700).get_string_size(T.bar_name(bar_id), HORIZONTAL_ALIGNMENT_LEFT, -1, int(19.0 * k)).x
-	_draw_pills(Vector2(x0 + name_w + 14.0, h * 0.34), k * 0.9, false)
+	_draw_money_badge(Vector2(x0 + name_w + 14.0, h * 0.34), k * 0.9, false)
 
 
 ## Simple venue icons (one per bar) so the bars differ by shape, not only by colour.
 func _draw_icon(c: Vector2, u: float, col: Color) -> void:
 	var lt := col.lightened(0.45)
+	var icon_tex: Texture2D = T.venue_icon(bar_id)
+	if icon_tex != null:
+		var isz := Vector2(u * 2.0, u * 2.0)
+		draw_texture_rect(icon_tex, Rect2(c - isz * 0.5, isz), false, Color(lt, 0.95))
+		return
 	var line := maxf(1.2, u * 0.07)
 	match bar_id:
 		"COLIBRI":    # martini glass with olive
