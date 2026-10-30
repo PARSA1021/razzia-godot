@@ -114,7 +114,7 @@ class Dossier extends Control:
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
-	z_index = 70
+	z_index = 80
 	Audio.play("panel_open")
 	for l in lines:
 		var known := false
@@ -155,6 +155,7 @@ func _ready() -> void:
 	add_child(_arrow)
 	_title_label = W.label(title, 18, T.GOLD, "title", HORIZONTAL_ALIGNMENT_CENTER, 800)
 	_title_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_title_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_title_label.visible = title != ""
 	add_child(_title_label)
 	_skip_btn = W.button("SKIP ▶▶", "ghost", 16, Vector2(112, 38))
@@ -202,8 +203,9 @@ func _layout() -> void:
 	_count.position = Vector2(_box.position.x + box_w - 150.0, box_y + box_h - 32.0)
 	_count.size = Vector2(90, 20)
 	_skip_btn.position = Vector2(w - 124.0, (bar_h - 38.0) / 2.0)
-	_title_label.position = Vector2(0, (bar_h - 26.0) / 2.0)
-	_title_label.size = Vector2(w, 26)
+	_title_label.position = Vector2(130.0, 0)
+	_title_label.size = Vector2(maxf(100.0, w - 260.0), bar_h)
+	_title_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	# dossier cards stand behind the box's top edge, at its two ends
 	var avail := box_y - bar_h - 16.0
 	var ch := minf(avail * (0.96 if portrait_mode else 0.98), 430.0)
@@ -269,13 +271,13 @@ func _apply_speaker(animate: bool) -> void:
 func _draw() -> void:
 	var w := size.x
 	var h := size.y
-	# the table sinks into a vignette
-	draw_rect(Rect2(0, 0, w, h), Color(0.015, 0.02, 0.018, 0.62 * _bars + 0.1))
+	# the table sinks into a deep noir vignette
+	draw_rect(Rect2(0, 0, w, h), Color(0.012, 0.015, 0.014, 0.95 * _bars))
 	var steps := 10
 	for i in range(steps):
 		var t := float(i) / float(steps)
 		var inset := minf(w, h) * 0.06 * float(i)
-		draw_rect(Rect2(inset, inset, w - inset * 2.0, h - inset * 2.0), Color(0, 0, 0, 0.035 * _bars * (1.0 - t)), false, minf(w, h) * 0.06)
+		draw_rect(Rect2(inset, inset, w - inset * 2.0, h - inset * 2.0), Color(0, 0, 0, 0.04 * _bars * (1.0 - t)), false, minf(w, h) * 0.06)
 	# letterbox bars
 	var bh := h * 0.075 * _bars
 	draw_rect(Rect2(0, 0, w, bh), Color("050403"))
@@ -288,8 +290,10 @@ func _draw() -> void:
 		var tw := f.get_string_size(title, HORIZONTAL_ALIGNMENT_LEFT, -1, 18).x
 		var cy := bh / 2.0
 		var gap := 18.0
-		draw_line(Vector2(w / 2.0 - tw / 2.0 - gap - 120.0, cy), Vector2(w / 2.0 - tw / 2.0 - gap, cy), Color(T.GOLD, 0.6), 1.0)
-		draw_line(Vector2(w / 2.0 + tw / 2.0 + gap, cy), Vector2(w / 2.0 + tw / 2.0 + gap + 120.0, cy), Color(T.GOLD, 0.6), 1.0)
+		var left_end := w / 2.0 - tw / 2.0 - gap
+		var right_start := w / 2.0 + tw / 2.0 + gap
+		draw_line(Vector2(maxf(140.0, left_end - 100.0), cy), Vector2(left_end, cy), Color(T.GOLD, 0.5), 1.0)
+		draw_line(Vector2(right_start, cy), Vector2(minf(w - 140.0, right_start + 100.0), cy), Color(T.GOLD, 0.5), 1.0)
 
 
 func _show_line(i: int) -> void:
@@ -303,7 +307,7 @@ func _show_line(i: int) -> void:
 	_speaker = who_idx
 	_apply_speaker(changed and i > 0)
 	var info: Dictionary = Characters.info(_chars[who_idx]["personality"])
-	_name_label.text = "%s%s" % [_chars[who_idx]["who"], ("  · " + info["label"]) if info["label"] != "" else ""]
+	_name_label.text = str(_chars[who_idx]["who"])
 	var col: Color = Portrait.COLORS.get(str(_chars[who_idx]["personality"]), T.GOLD)
 	_name_plate.add_theme_stylebox_override("panel", W.sb(T.GOLD.lerp(col, 0.35), Color("fff4d8"), 1, 16, Vector4(16, 4, 16, 4)))
 	_place_plate()
