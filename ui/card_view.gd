@@ -189,18 +189,32 @@ func _draw_face(w: float, h: float) -> void:
 		draw_rect(Rect2(3.5 * k, 3.5 * k, w - 7.0 * k, h - 7.0 * k), Color(col.lightened(0.25), 0.65), false, maxf(1.0, 1.4 * k))
 	# header
 	var hf := T.font("title", 700)
-	var header_rect := Rect2(5 * k, 5 * k, w - 10 * k, 21 * k)
+	var header_rect := Rect2(5 * k, 5 * k, w - 10 * k, 22 * k)
 	if razzia:
-		draw_rect(header_rect, Color(col, 0.45))
-		draw_rect(header_rect, Color(col.lightened(0.35), 0.8), false, maxf(1.0, k))
-		_draw_police_star(Vector2(14 * k, 15.5 * k), 4.5 * k, T.GOLD)
-		_draw_police_star(Vector2(w - 14 * k, 15.5 * k), 4.5 * k, T.GOLD)
+		draw_rect(header_rect, Color("3d0d0b", 0.90))
+		draw_rect(header_rect, Color(T.DANGER, 0.85), false, maxf(1.0, k))
+		var p_icon: Texture2D = T.police_icon()
+		if p_icon != null:
+			draw_texture_rect(p_icon, Rect2(8 * k, 8 * k, 16 * k, 16 * k), false, Color("ffd770"))
+			draw_texture_rect(p_icon, Rect2(w - 24 * k, 8 * k, 16 * k, 16 * k), false, Color("ffd770"))
+		else:
+			_draw_police_star(Vector2(14 * k, 16.0 * k), 4.5 * k, T.GOLD)
+			_draw_police_star(Vector2(w - 14 * k, 16.0 * k), 4.5 * k, T.GOLD)
 	else:
-		draw_rect(header_rect, Color(col, 0.28))
-	# the venue is the card's identity: on a small card the short name is drawn larger rather than the full one tiny
-	var fit := T.fit_bar_name(str(card["barId"]), hf, int(round(T.fs(12.5 * k, 1.5))), int(round(9.0 * k)), w - 12 * k)
+		draw_rect(header_rect, Color(col, 0.32).darkened(0.25))
+		draw_rect(header_rect, Color(col.lightened(0.3), 0.7), false, maxf(1.0, k))
+		var v_icon: Texture2D = T.venue_icon(str(card.get("barId", "")))
+		if v_icon != null:
+			draw_texture_rect(v_icon, Rect2(8 * k, 8 * k, 16 * k, 16 * k), false, Color(col.lightened(0.45), 0.95))
+			draw_texture_rect(v_icon, Rect2(w - 24 * k, 8 * k, 16 * k, 16 * k), false, Color(col.lightened(0.45), 0.95))
+		else:
+			_draw_police_star(Vector2(14 * k, 16.0 * k), 3.5 * k, T.GOLD)
+			_draw_police_star(Vector2(w - 14 * k, 16.0 * k), 3.5 * k, T.GOLD)
+	# the venue is the card's identity: fitted title text between flanking icons
+	var fit := T.fit_bar_name(str(card["barId"]), hf, int(round(T.fs(12.5 * k, 1.5))), int(round(9.0 * k)), w - 52 * k)
 	T.note_text(self, fit["px"], fit["text"])
-	draw_string(hf, Vector2(5 * k, 20.5 * k), fit["text"], HORIZONTAL_ALIGNMENT_CENTER, w - 10 * k, int(fit["px"]), T.GOLD)
+	draw_string(hf, Vector2(26 * k, 21.0 * k), fit["text"], HORIZONTAL_ALIGNMENT_CENTER, w - 52 * k, int(fit["px"]), Color("fff2d8") if razzia else T.GOLD)
+
 	# art window
 	var art := Rect2(9 * k, 31 * k, w - 18 * k, 98 * k)
 	var tex: Texture2D = T.art("razzia", str(card.get("barId", ""))) if razzia else T.art("zocker", str(card["barId"]))
@@ -210,17 +224,45 @@ func _draw_face(w: float, h: float) -> void:
 		_draw_art_fallback(art, col, razzia, k)
 	# art frame
 	draw_rect(art, Color(Color(col.lightened(0.2), 0.85) if razzia else Color(T.BRASS, 0.8)), false, maxf(1.0, 1.4 * k))
-	# footer
-	draw_line(Vector2(9 * k, 135 * k), Vector2(w - 9 * k, 135 * k), Color(col if razzia else T.BRASS, 0.7 if razzia else 0.5), maxf(1.0, k))
-	var tf := T.font("title", 800)
-	var tcol := T.GOLD if not razzia else Color("ffd770")
-	var label := "★ RAZZIA" if razzia else "ZOCKER"
-	_text(label, Vector2(10 * k, 163 * k), tf, 13.5 * k if razzia else 14.0 * k, tcol, w * 0.62, HORIZONTAL_ALIGNMENT_LEFT)
+
+	# footer: Venue symbol + Name + 28px Die (NO repeated RAZZIA/ZOCKER except police cards)
+	draw_line(Vector2(7 * k, 131 * k), Vector2(w - 7 * k, 131 * k), Color(col if razzia else T.BRASS, 0.7 if razzia else 0.5), maxf(1.0, 1.2 * k))
+
+	# 28px+ Die box
+	var die_sz := 34.0 * k
+	var die_rect := Rect2(w - die_sz - 8.0 * k, 135.0 * k, die_sz, die_sz)
 	if razzia:
-		_draw_die_police(Rect2(w - 41 * k, 141 * k, 31 * k, 31 * k), int(card["dieSymbol"]), k, col)
+		_draw_die_police(die_rect, int(card["dieSymbol"]), k, col)
 	else:
-		_draw_die(Rect2(w - 41 * k, 141 * k, 31 * k, 31 * k), int(card["dieSymbol"]), k)
-	# (no name band on a full-size face: it would cover the ZOCKER / RAZZIA label; the owner is obvious from the slot)
+		_draw_die(die_rect, int(card["dieSymbol"]), k)
+
+	# Left/middle info section
+	var isz := 24.0 * k
+	var ix := 8.0 * k
+	var iy := 140.0 * k
+	var avail_w := die_rect.position.x - (ix + isz + 8.0 * k)
+	if razzia:
+		# Police Card: Badge icon + ★ RAZZIA stamp text
+		var p_icon: Texture2D = T.police_icon()
+		if p_icon != null:
+			draw_texture_rect(p_icon, Rect2(ix, iy, isz, isz), false, Color("ffd770"))
+		else:
+			_draw_police_star(Vector2(ix + isz * 0.5, iy + isz * 0.5), 7.0 * k, Color("ffd770"))
+		var sf := T.font("stamp")
+		var s_text := "★ RAZZIA"
+		var s_sz := 14.5 * k
+		draw_string(sf, Vector2(ix + isz + 6.0 * k + 1, iy + 17.0 * k + 1), s_text, HORIZONTAL_ALIGNMENT_LEFT, avail_w, int(s_sz), Color(0, 0, 0, 0.85))
+		draw_string(sf, Vector2(ix + isz + 6.0 * k, iy + 17.0 * k), s_text, HORIZONTAL_ALIGNMENT_LEFT, avail_w, int(s_sz), Color("ffd770"))
+	else:
+		# Gambler Card: Venue unique vector icon + Venue name (NO "ZOCKER", NO "RAZZIA")
+		var v_icon: Texture2D = T.venue_icon(str(card.get("barId", "")))
+		if v_icon != null:
+			draw_texture_rect(v_icon, Rect2(ix, iy, isz, isz), false, Color(col.lightened(0.4), 0.95))
+		var tf := T.font("title", 700)
+		var v_name: String = T.BAR_SHORT.get(str(card.get("barId", "")), str(card.get("barId", "")))
+		var v_sz := 13.5 * k
+		draw_string(tf, Vector2(ix + isz + 6.0 * k + 1, iy + 17.0 * k + 1), v_name, HORIZONTAL_ALIGNMENT_LEFT, avail_w, int(v_sz), Color(0, 0, 0, 0.85))
+		draw_string(tf, Vector2(ix + isz + 6.0 * k, iy + 17.0 * k), v_name, HORIZONTAL_ALIGNMENT_LEFT, avail_w, int(v_sz), T.GOLD)
 
 
 func _draw_police_star(center: Vector2, r: float, color: Color) -> void:
@@ -305,19 +347,43 @@ func _draw_gambler(top: Vector2, art: Rect2, col: Color, k: float) -> void:
 	# rim light
 	draw_arc(head, 14.5 * k, -PI * 0.15, PI * 0.55, 12, Color(col.lightened(0.4), 0.6), maxf(1.0, 1.4 * k))
 
+	# Venue crest medallion on chest (ensures instant venue recognition in monochrome)
+	var med_c := Vector2(cx, base - 20 * k)
+	var med_r := 15.0 * k
+	draw_circle(med_c, med_r, Color("14100c"))
+	draw_circle(med_c, med_r, Color(col, 0.35))
+	draw_arc(med_c, med_r, 0, TAU, 24, Color(T.BRASS, 0.85), maxf(1.0, 1.2 * k))
+	var v_icon: Texture2D = T.venue_icon(str(card.get("barId", "")))
+	if v_icon != null:
+		var isz := 20.0 * k
+		draw_texture_rect(v_icon, Rect2(med_c - Vector2(isz, isz) * 0.5, Vector2(isz, isz)), false, Color(col.lightened(0.5), 0.98))
+
 
 func _draw_badge(center: Vector2, k: float) -> void:
-	draw_circle(center, 34 * k, Color(T.DANGER, 0.18))
-	draw_circle(center, 24 * k, Color(T.POLICE_BLUE, 0.16))
-	var pts: PackedVector2Array = []
-	for i in range(10):
-		var r := 26.0 * k if i % 2 == 0 else 11.5 * k
-		var a := -PI / 2.0 + i * PI / 5.0
-		pts.append(center + Vector2(cos(a), sin(a)) * r)
-	draw_colored_polygon(pts, T.GOLD)
-	draw_circle(center, 8.5 * k, Color("2a1210"))
-	draw_circle(center, 5.0 * k, T.DANGER)
-	# siren beams
+	# Police raid aura and spotlight
+	draw_circle(center, 38 * k, Color(T.DANGER, 0.22))
+	draw_circle(center, 28 * k, Color(T.POLICE_BLUE, 0.20))
+
+	# Inked raid stamp circle
+	draw_arc(center, 34 * k, 0, TAU, 32, Color(T.DANGER, 0.85), maxf(1.5, 2.0 * k))
+	draw_arc(center, 30 * k, 0, TAU, 32, Color(T.DANGER, 0.45), maxf(1.0, 1.0 * k))
+
+	# Chicago Police Star Shield Badge (Vector SVG)
+	var p_icon: Texture2D = T.police_icon()
+	if p_icon != null:
+		var bsz := 46.0 * k
+		draw_texture_rect(p_icon, Rect2(center - Vector2(bsz, bsz) * 0.5, Vector2(bsz, bsz)), false, Color("ffd770"))
+	else:
+		var pts: PackedVector2Array = []
+		for i in range(10):
+			var r := 26.0 * k if i % 2 == 0 else 11.5 * k
+			var a := -PI / 2.0 + i * PI / 5.0
+			pts.append(center + Vector2(cos(a), sin(a)) * r)
+		draw_colored_polygon(pts, T.GOLD)
+		draw_circle(center, 8.5 * k, Color("2a1210"))
+		draw_circle(center, 5.0 * k, T.DANGER)
+
+	# Raid siren beams
 	draw_line(center + Vector2(-38 * k, -26 * k), center + Vector2(-26 * k, -18 * k), Color(T.POLICE_BLUE, 0.9), 2.2 * k)
 	draw_line(center + Vector2(38 * k, -26 * k), center + Vector2(26 * k, -18 * k), Color(T.DANGER, 0.9), 2.2 * k)
 
@@ -370,8 +436,8 @@ func _draw_mini_face(w: float, h: float) -> void:
 		_draw_die_police(Rect2(w - 4.0 * k - d, y1, d, d), int(card["dieSymbol"]), k * 0.9, col)
 	else:
 		_draw_die(Rect2(w - 4.0 * k - d, y1, d, d), int(card["dieSymbol"]), k * 0.9)
-	var label := "★ RAZZIA" if razzia else "ZOCKER"
-	var lf := T.font("title", 800)
+	var label: String = "★ RAZZIA" if razzia else str(T.BAR_SHORT.get(str(card.get("barId", "")), ""))
+	var lf := T.font("stamp" if razzia else "title", 800)
 	var lpx := int(round(T.fs(9.5 * k, 1.5)))
 	var room := w - 8.0 * k - d - 4.0 * k
 	while lpx > 10 and lf.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, lpx).x > room:
@@ -384,6 +450,10 @@ func _draw_mini_face(w: float, h: float) -> void:
 		var sc := band.get_center()
 		var sr := band.size.y * 0.38
 		_draw_police_star(sc, sr, Color("fff4d8"))
+	elif not razzia and not readable_word:
+		var v_ico: Texture2D = T.venue_icon(str(card.get("barId", "")))
+		if v_ico != null:
+			draw_texture_rect(v_ico, Rect2(5.0 * k, y1 + (d - 12.0 * k) * 0.5, 12.0 * k, 12.0 * k), false, Color(col.lightened(0.4), 0.95))
 	if readable_word:
 		T.note_text(self, lpx, label)
 		draw_string(lf, Vector2(5.0 * k, y1 + d * 0.5 + lpx * 0.35), label, HORIZONTAL_ALIGNMENT_LEFT, room, lpx, Color("ffd770") if razzia else T.GOLD)
@@ -407,8 +477,8 @@ func _draw_compact(w: float, h: float) -> void:
 	_sb(Color("1a140d") if not razzia else Color("14100c"), col, 2.6 * k, 6.0 * k).draw(get_canvas_item(), Rect2(0, 0, w, h))
 	if razzia:
 		draw_rect(Rect2(1.8 * k, 1.8 * k, w - 3.6 * k, h - 3.6 * k), Color(col.lightened(0.25), 0.5), false, maxf(1.0, k))
-	var f := T.font("title", 800)
-	var label := "★ RAZZIA" if razzia else "ZOCKER"
+	var f := T.font("stamp" if razzia else "title", 800)
+	var label: String = "★ RAZZIA" if razzia else str(T.BAR_SHORT.get(str(card.get("barId", "")), ""))
 	var tcol := Color("ffd770") if razzia else T.GOLD
 	draw_rect(Rect2(3 * k, 3 * k, w - 6 * k, 11 * k), Color(col, 0.40) if razzia else Color(col, 0.30))
 	var phys := T.phys(self)
@@ -419,6 +489,10 @@ func _draw_compact(w: float, h: float) -> void:
 		draw_rect(Rect2(3 * k, 3 * k, w - 6 * k, 11 * k), Color(col, 0.95))     # the police band says RAZZIA by shape
 		var sc := Vector2(w / 2.0, 8.5 * k)
 		_draw_police_star(sc, 4.2 * k, Color("fff4d8"))
+	else:
+		var v_ico: Texture2D = T.venue_icon(str(card.get("barId", "")))
+		if v_ico != null:
+			draw_texture_rect(v_ico, Rect2((w - 9.0 * k) / 2.0, 4.0 * k, 9.0 * k, 9.0 * k), false, Color(col.lightened(0.4), 0.95))
 	var d := minf(w - 14 * k, h * (0.32 if caption != "" else 0.40))
 	_draw_die(Rect2((w - d) / 2.0, 17 * k, d, d), int(card["dieSymbol"]), k * 0.9)
 	if h > 56.0 * k and words_ok:
