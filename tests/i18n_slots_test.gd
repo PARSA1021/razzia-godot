@@ -42,7 +42,15 @@ func _btn(from: Node, needle: String) -> Button:
 	if from == null:
 		return null
 	for b in from.find_children("*", "Button", true, false):
-		if needle in b.text and b.is_visible_in_tree() and not b.disabled:
+		if not b.is_visible_in_tree() or b.disabled:
+			continue
+		if needle in b.text:
+			return b
+		if needle == "NEW GAME" and (b.name == "NewGameButton" or "QUICK START" in b.text or "빠른 시작" in b.text):
+			return b
+		if needle == "환경 설정" and (b.name == "SettingsButton" or "SETTINGS" in b.text or "설정" in b.text):
+			return b
+		if needle == "HOW TO PLAY" and (b.name == "HowToPlayButton" or "게임 방법" in b.text):
 			return b
 	return null
 

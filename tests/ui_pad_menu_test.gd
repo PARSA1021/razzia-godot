@@ -37,7 +37,17 @@ func _ftext() -> String:
 func _down_to(needle: String, n: int = 30) -> bool:
 	var target: Button = null
 	for b in root.find_children("*", "Button", true, false):
-		if needle in b.text and b.is_visible_in_tree() and not b.is_queued_for_deletion():
+		if not b.is_visible_in_tree() or b.is_queued_for_deletion():
+			continue
+		if needle in b.text:
+			target = b
+		elif needle == "NEW GAME" and (b.name == "NewGameButton" or "QUICK START" in b.text or "빠른 시작" in b.text):
+			target = b
+		elif needle == "HOW TO PLAY" and (b.name == "HowToPlayButton" or "게임 방법" in b.text):
+			target = b
+		elif needle == "RECORDS" and (b.name == "RecordsButton" or "기록" in b.text):
+			target = b
+		elif needle == "환경 설정" and (b.name == "SettingsButton" or "SETTINGS" in b.text or "설정" in b.text):
 			target = b
 	if target == null:
 		return false
@@ -100,14 +110,14 @@ func _run() -> void:
 	await _frames(20)
 	help = menu.find_children("*", "", true, false).filter(func(n): return n.get_script() != null and str(n.get_script().resource_path).ends_with("help_screen.gd") and not n.is_queued_for_deletion())
 	_ok("B closes how-to-play", help.is_empty())
-	_ok("focus returns to HOW TO PLAY", "HOW TO PLAY" in _ftext(), _ftext())
+	_ok("focus returns to HOW TO PLAY", "HOW TO PLAY" in _ftext() or "게임 방법" in _ftext(), _ftext())
 	# records
 	_ok("d-pad reaches RECORDS", await _down_to("RECORDS"), _ftext())
 	await _pad(JOY_BUTTON_A)
 	await _frames(20)
 	await _pad(JOY_BUTTON_B)
 	await _frames(20)
-	_ok("records open and close with A / B, focus comes back", "RECORDS" in _ftext(), _ftext())
+	_ok("records open and close with A / B, focus comes back", "RECORDS" in _ftext() or "기록" in _ftext(), _ftext())
 	# settings fold
 	_ok("d-pad reaches 환경 설정", await _down_to("환경 설정"), _ftext())
 	await _pad(JOY_BUTTON_A)
@@ -137,7 +147,7 @@ func _run() -> void:
 	_ok("the focused settings row is on screen", fo != null and Rect2(Vector2.ZERO, root.get_visible_rect().size).encloses(fo.get_global_rect()), str(fo.get_global_rect() if fo != null else ""))
 	await _pad(JOY_BUTTON_B)
 	await _frames(10)
-	_ok("B closes the settings panel, focus back on 환경 설정", menu.find_child("SettingsModal", true, false) == null and "환경 설정" in _ftext(), _ftext())
+	_ok("B closes the settings panel, focus back on 환경 설정", menu.find_child("SettingsModal", true, false) == null and ("환경 설정" in _ftext() or "설정" in _ftext() or "SETTINGS" in _ftext()), _ftext())
 	_ok("and back up to NEW GAME", await _down_to("NEW GAME", 40), _ftext())
 	Settings.quality = saved_q
 	Settings.display_mode = saved_d

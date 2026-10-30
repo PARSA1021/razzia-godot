@@ -50,7 +50,7 @@ func _run() -> void:
 	for i in 30:
 		await process_frame
 	for b in main.current.find_children("*", "Button", true, false):
-		if "NEW GAME" in b.text:
+		if b.name == "NewGameButton" or "NEW GAME" in b.text or "빠른 시작" in b.text or "QUICK START" in b.text:
 			b.pressed.emit()
 			break
 	var game = main.current

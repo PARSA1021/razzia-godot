@@ -206,12 +206,6 @@ func _build_left() -> Control:
 	var logo_box := VBoxContainer.new()
 	logo_box.add_theme_constant_override("separation", 3)
 	
-	# Top noir tagline badge
-	var badge_row := HBoxContainer.new()
-	badge_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	badge_row.add_child(_chip("✦ 1920s CHICAGO GANGSTER POKER ✦", Color(T.GOLD, 0.9), 11))
-	logo_box.add_child(badge_row)
-	
 	var t := W.label("RAZZIA", title_size, T.GOLD, "title", HORIZONTAL_ALIGNMENT_CENTER, 800)
 	t.add_theme_color_override("font_outline_color", Color("140b04"))
 	t.add_theme_constant_override("outline_size", 14)
@@ -223,8 +217,8 @@ func _build_left() -> Control:
 	orn.custom_minimum_size = Vector2(0, 16)
 	logo_box.add_child(orn)
 	
-	logo_box.add_child(W.label("THE LAST HEIST ON THE STRIP", 15, T.BRASS, "title", HORIZONTAL_ALIGNMENT_CENTER, 700))
-	var sub := W.label("여섯 술집, 한 번의 단속 · 3~8인 카드 게임", 15, T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_CENTER, 500)
+	logo_box.add_child(W.label(T.t("시카고 루프의 마지막 한 판"), 16, T.BRASS, "title", HORIZONTAL_ALIGNMENT_CENTER, 700))
+	var sub := W.label(T.t("여섯 술집, 한 번의 단속 · 3~8인 카드 게임"), 14, T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_CENTER, 500)
 	logo_box.add_child(sub)
 	v.add_child(logo_box)
 	
@@ -235,7 +229,7 @@ func _build_left() -> Control:
 	var first: Button = null
 	
 	# ① QUICK START (가장 크고 눈에 띄게, 기본 포커스)
-	var quick_start := W.button("QUICK START  ·  빠른 시작 (NEW GAME)", "primary", 22, Vector2(0, 64))
+	var quick_start := W.button(T.t("빠른 시작"), "primary", 22, Vector2(0, 64))
 	quick_start.name = "NewGameButton"
 	quick_start.pressed.connect(_on_quick_start)
 	v.add_child(quick_start)
@@ -248,13 +242,13 @@ func _build_left() -> Control:
 	# ② 이어하기 (저장된 게임이 있을 때만 표시)
 	var any := SaveStore.any_save()
 	if any:
-		var c := W.button("CONTINUE  ·  이어하기", "secondary", 19, Vector2(0, 52))
+		var c := W.button(T.t("이어하기"), "secondary", 19, Vector2(0, 52))
 		c.name = "ContinueButton"
 		c.pressed.connect(_show_slots)
 		v.add_child(c)
 	
 	# ③ 튜토리얼
-	var tut_btn := W.button("TUTORIAL  ·  튜토리얼 (Sal과 3라운드)", "secondary", 18, Vector2(0, 48))
+	var tut_btn := W.button(T.t("튜토리얼"), "secondary", 18, Vector2(0, 48))
 	tut_btn.name = "TutorialButton"
 	tut_btn.pressed.connect(func():
 		Audio.play("card_snap")
@@ -263,7 +257,7 @@ func _build_left() -> Control:
 	v.add_child(tut_btn)
 	
 	# ④ 사용자 지정 게임
-	var custom_btn := W.button("CUSTOM GAME  ·  사용자 지정 게임", "secondary", 18, Vector2(0, 48))
+	var custom_btn := W.button(T.t("사용자 지정 게임"), "secondary", 18, Vector2(0, 48))
 	custom_btn.name = "CustomGameButton"
 	custom_btn.pressed.connect(_show_custom_game)
 	v.add_child(custom_btn)
@@ -272,12 +266,13 @@ func _build_left() -> Control:
 	var util_row := HBoxContainer.new()
 	util_row.add_theme_constant_override("separation", 10)
 	
-	var how := W.button("HOW TO PLAY  ·  게임 방법", "secondary", 16, Vector2(0, 44))
+	var how := W.button(T.t("게임 방법"), "secondary", 16, Vector2(0, 44))
+	how.name = "HowToPlayButton"
 	how.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	how.pressed.connect(_toggle_help)
 	util_row.add_child(how)
 	
-	var rec := W.button("RECORDS  ·  기록 · 업적", "secondary", 16, Vector2(0, 44))
+	var rec := W.button(T.t("기록"), "secondary", 16, Vector2(0, 44))
 	rec.name = "RecordsButton"
 	rec.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	rec.pressed.connect(func(): add_child(RecordsScreen.new()))
@@ -286,14 +281,14 @@ func _build_left() -> Control:
 	v.add_child(util_row)
 	
 	# ⑥ 설정
-	var settings_btn := W.button("SETTINGS  ·  환경 설정", "secondary", 17, Vector2(0, 46))
+	var settings_btn := W.button(T.t("설정"), "secondary", 17, Vector2(0, 46))
 	settings_btn.name = "SettingsButton"
 	settings_btn.pressed.connect(_show_settings)
 	v.add_child(settings_btn)
 	
 	# ⑦ 종료 (PC에서만)
 	if OS.get_name() in ["macOS", "Windows", "Linux", "FreeBSD"] and not OS.has_feature("mobile"):
-		var quit_btn := W.button("QUIT  ·  게임 종료", "ghost", 15, Vector2(0, 38))
+		var quit_btn := W.button(T.t("게임 종료"), "ghost", 15, Vector2(0, 38))
 		quit_btn.name = "QuitButton"
 		quit_btn.pressed.connect(func(): get_tree().quit())
 		v.add_child(quit_btn)
@@ -523,7 +518,7 @@ func _build_card() -> Control:
 	v.add_child(_slot_hint)
 	_refresh_slot_hint()
 	# Action button to start game with chosen custom options
-	var start_custom_btn := W.button("START WITH THIS SETUP  ·  이 설정으로 시작", "primary", 18, Vector2(0, 50))
+	var start_custom_btn := W.button(T.t("이 설정으로 시작"), "primary", 18, Vector2(0, 50))
 	start_custom_btn.name = "CustomStartButton"
 	start_custom_btn.pressed.connect(_on_custom_start)
 	v.add_child(W.rule(1.0, 1))
@@ -614,12 +609,12 @@ func _show_custom_game() -> void:
 	if has_node("CustomGameModal"):
 		return
 	var vb := _modal("CustomGameModal")
-	vb.add_child(W.label(T.t("사용자 지정 게임 (CUSTOM GAME)"), 22, T.GOLD, "title", HORIZONTAL_ALIGNMENT_LEFT, 800))
+	vb.add_child(W.label(T.t("사용자 지정 게임"), 22, T.GOLD, "title", HORIZONTAL_ALIGNMENT_LEFT, 800))
 	if _custom_card.get_parent() != null:
 		_custom_card.get_parent().remove_child(_custom_card)
 	vb.add_child(_custom_card)
 	_refresh()
-	var close := W.button(T.t("닫기  ·  BACK"), "secondary", 16, Vector2(140, 42))
+	var close := W.button(T.t("닫기"), "secondary", 16, Vector2(140, 42))
 	close.size_flags_horizontal = Control.SIZE_SHRINK_END
 	close.pressed.connect(func():
 		var m := get_node_or_null("CustomGameModal")

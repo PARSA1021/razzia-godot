@@ -27,7 +27,7 @@ func _btn(from: Node, needle: String) -> Button:
 	if from == null:
 		return null
 	for b in from.find_children("*", "Button", true, false):
-		if needle in b.text and b.is_visible_in_tree() and not b.disabled:
+		if (needle in b.text or (needle == "NEW GAME" and (b.name == "NewGameButton" or "빠른 시작" in b.text or "QUICK START" in b.text))) and b.is_visible_in_tree() and not b.disabled:
 			return b
 	return null
 
