@@ -28,6 +28,9 @@ var save_slot := 0                   # 0 = not chosen yet: the first empty slot 
 var _slot_hint: Label
 var _count_label: Label
 var _roster_lbl: Label
+var _rule_hint: Label
+var _custom_card: Control
+var _custom_holder: Control
 var _dots: Control
 var _help: Control
 var _content: Control
@@ -39,6 +42,9 @@ func _ready() -> void:
 	Audio.cue("menu")
 	Audio.start_music()
 	Settings.load_settings()
+	player_count = Settings.last_player_count
+	difficulty = Settings.last_difficulty
+	game_mode = Settings.last_game_mode
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_build_backdrop()
 	resized.connect(_on_resized)
@@ -119,30 +125,26 @@ func _build_content() -> void:
 	var margin := MarginContainer.new()
 	for side in ["left", "right"]:
 		margin.add_theme_constant_override("margin_" + side, 28)
-	margin.add_theme_constant_override("margin_top", 56)          # clear of the language switch in the corner
+	margin.add_theme_constant_override("margin_top", 44)          # clear of the language switch in the corner
 	margin.add_theme_constant_override("margin_bottom", 20)
 	fit.add_child(margin)
 	var center := CenterContainer.new()
 	margin.add_child(center)
 	var left := _build_left()
-	var card := _build_card()
-	if _portrait:
-		var col := VBoxContainer.new()
-		col.add_theme_constant_override("separation", 26)
-		col.custom_minimum_size = Vector2(minf(620.0, maxf(300.0, size.x - 56.0)), 0)
-		col.add_child(left)
-		col.add_child(card)
-		center.add_child(col)
-	else:
-		var hb := HBoxContainer.new()
-		hb.add_theme_constant_override("separation", 56)
-		left.custom_minimum_size = Vector2(430, 0)
-		card.custom_minimum_size = Vector2(500, 0)
-		hb.add_child(left)
-		hb.add_child(card)
-		center.add_child(hb)
+	left.custom_minimum_size = Vector2(minf(480.0, maxf(320.0, size.x - 56.0)), 0)
+	center.add_child(left)
+	
+	if _custom_holder != null and is_instance_valid(_custom_holder):
+		_custom_holder.queue_free()
+	_custom_holder = Control.new()
+	_custom_holder.name = "CustomCardHolder"
+	_custom_holder.visible = false
+	add_child(_custom_holder)
+	_custom_card = _build_card()
+	_custom_holder.add_child(_custom_card)
+	
 	_refresh()
-	_fade_in([left, card])
+	_fade_in([left])
 	_build_lang_switch()
 
 
@@ -198,16 +200,16 @@ static func _chip(text: String, color: Color, size: int = 12) -> Control:
 func _build_left() -> Control:
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 10)
-	var title_size := 88 if _portrait else 104
+	var title_size := 88 if _portrait else 96
 	
 	# Header & Logo Section
 	var logo_box := VBoxContainer.new()
-	logo_box.add_theme_constant_override("separation", 4)
+	logo_box.add_theme_constant_override("separation", 3)
 	
 	# Top noir tagline badge
 	var badge_row := HBoxContainer.new()
 	badge_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	badge_row.add_child(_chip("✦ 1920s CHICAGO GANGSTER POKER & RELIC ROGUELIKE ✦", Color(T.GOLD, 0.9), 11))
+	badge_row.add_child(_chip("✦ 1920s CHICAGO GANGSTER POKER ✦", Color(T.GOLD, 0.9), 11))
 	logo_box.add_child(badge_row)
 	
 	var t := W.label("RAZZIA", title_size, T.GOLD, "title", HORIZONTAL_ALIGNMENT_CENTER, 800)
@@ -218,11 +220,11 @@ func _build_left() -> Control:
 	logo_box.add_child(t)
 	
 	var orn := Ornament.new()
-	orn.custom_minimum_size = Vector2(0, 18)
+	orn.custom_minimum_size = Vector2(0, 16)
 	logo_box.add_child(orn)
 	
-	logo_box.add_child(W.label("THE LAST HEIST ON THE STRIP", 16, T.BRASS, "title", HORIZONTAL_ALIGNMENT_CENTER, 700))
-	var sub := W.label("여섯 술집, 한 번의 단속 · 3~8인 카드 게임", 16, T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_CENTER, 500)
+	logo_box.add_child(W.label("THE LAST HEIST ON THE STRIP", 15, T.BRASS, "title", HORIZONTAL_ALIGNMENT_CENTER, 700))
+	var sub := W.label("여섯 술집, 한 번의 단속 · 3~8인 카드 게임", 15, T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_CENTER, 500)
 	logo_box.add_child(sub)
 	v.add_child(logo_box)
 	
@@ -231,20 +233,70 @@ func _build_left() -> Control:
 	v.add_child(gap)
 	
 	var first: Button = null
+	
+	# ① QUICK START (가장 크고 눈에 띄게, 기본 포커스)
+	var quick_start := W.button("QUICK START  ·  빠른 시작 (NEW GAME)", "primary", 22, Vector2(0, 64))
+	quick_start.name = "NewGameButton"
+	quick_start.pressed.connect(_on_quick_start)
+	v.add_child(quick_start)
+	first = quick_start
+	
+	if not Settings.tutorial_done:
+		var tut_hint := W.label(T.t("💡 처음이라면 튜토리얼을 추천해요 (3분)"), 13, Color(T.GOLD, 0.95), "ui", HORIZONTAL_ALIGNMENT_CENTER, 600)
+		v.add_child(tut_hint)
+	
+	# ② 이어하기 (저장된 게임이 있을 때만 표시)
 	var any := SaveStore.any_save()
 	if any:
-		var c := W.button("CONTINUE  ·  이어하기", "primary", 23, Vector2(0, 58))
+		var c := W.button("CONTINUE  ·  이어하기", "secondary", 19, Vector2(0, 52))
 		c.name = "ContinueButton"
 		c.pressed.connect(_show_slots)
 		v.add_child(c)
-		first = c
 	
-	var start := W.button("NEW GAME  ·  새 게임", "primary" if not any else "secondary", 23, Vector2(0, 58))
-	start.name = "NewGameButton"
-	start.pressed.connect(_on_start)
-	v.add_child(start)
-	if first == null:
-		first = start
+	# ③ 튜토리얼
+	var tut_btn := W.button("TUTORIAL  ·  튜토리얼 (Sal과 3라운드)", "secondary", 18, Vector2(0, 48))
+	tut_btn.name = "TutorialButton"
+	tut_btn.pressed.connect(func():
+		Audio.play("card_snap")
+		tutorial_requested.emit(_config())
+	)
+	v.add_child(tut_btn)
+	
+	# ④ 사용자 지정 게임
+	var custom_btn := W.button("CUSTOM GAME  ·  사용자 지정 게임", "secondary", 18, Vector2(0, 48))
+	custom_btn.name = "CustomGameButton"
+	custom_btn.pressed.connect(_show_custom_game)
+	v.add_child(custom_btn)
+	
+	# ⑤ 게임 방법 및 기록
+	var util_row := HBoxContainer.new()
+	util_row.add_theme_constant_override("separation", 10)
+	
+	var how := W.button("HOW TO PLAY  ·  게임 방법", "secondary", 16, Vector2(0, 44))
+	how.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	how.pressed.connect(_toggle_help)
+	util_row.add_child(how)
+	
+	var rec := W.button("RECORDS  ·  기록 · 업적", "secondary", 16, Vector2(0, 44))
+	rec.name = "RecordsButton"
+	rec.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	rec.pressed.connect(func(): add_child(RecordsScreen.new()))
+	util_row.add_child(rec)
+	
+	v.add_child(util_row)
+	
+	# ⑥ 설정
+	var settings_btn := W.button("SETTINGS  ·  환경 설정", "secondary", 17, Vector2(0, 46))
+	settings_btn.name = "SettingsButton"
+	settings_btn.pressed.connect(_show_settings)
+	v.add_child(settings_btn)
+	
+	# ⑦ 종료 (PC에서만)
+	if OS.get_name() in ["macOS", "Windows", "Linux", "FreeBSD"] and not OS.has_feature("mobile"):
+		var quit_btn := W.button("QUIT  ·  게임 종료", "ghost", 15, Vector2(0, 38))
+		quit_btn.name = "QuitButton"
+		quit_btn.pressed.connect(func(): get_tree().quit())
+		v.add_child(quit_btn)
 	
 	first.set_meta("default_focus", true)
 	_default_btn = first
@@ -253,25 +305,6 @@ func _build_left() -> Control:
 		if is_instance_valid(first) and first.is_inside_tree() and (fo == null or not is_ancestor_of(fo)):
 			first.grab_focus()).call_deferred()
 	
-	# Utility buttons in a sleek 2-column HBox
-	var util_row := HBoxContainer.new()
-	util_row.add_theme_constant_override("separation", 10)
-	
-	var how := W.button("HOW TO PLAY  ·  게임 방법", "secondary", 18, Vector2(0, 48))
-	how.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	how.pressed.connect(_toggle_help)
-	util_row.add_child(how)
-	
-	var rec := W.button("RECORDS  ·  기록 · 업적", "secondary", 18, Vector2(0, 48))
-	rec.name = "RecordsButton"
-	rec.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	rec.pressed.connect(func(): add_child(RecordsScreen.new()))
-	util_row.add_child(rec)
-	
-	v.add_child(util_row)
-	
-	# Balatro style interactive tutorial voucher card
-	v.add_child(_build_tutorial_card())
 	return v
 
 
@@ -424,6 +457,9 @@ func _build_card() -> Control:
 	_roster_lbl = W.label("", 12, T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_CENTER, 500)
 	_roster_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD
 	pr.add_child(_roster_lbl)
+	_rule_hint = W.label("", 13, Color(T.GOLD, 0.95), "ui", HORIZONTAL_ALIGNMENT_CENTER, 600)
+	_rule_hint.autowrap_mode = TextServer.AUTOWRAP_WORD
+	pr.add_child(_rule_hint)
 	v.add_child(pr)
 	var dkeys := ["EASY", "NORMAL", "HARD"]
 	var dhint := W.label(_diff_hint(difficulty), 13, T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_CENTER, 500)
@@ -469,26 +505,29 @@ func _build_card() -> Control:
 		commit.call()
 		name_edit.text = Settings.player_name)
 	v.add_child(_row("내 이름", name_edit))
-	# which save slot this game lives in
+	# which save slot this game lives in (hidden on main, managed in Settings -> 저장 관리)
 	var slot_labels: Array = []
 	for n in SaveStore.SLOTS:
 		slot_labels.append(T.t("슬롯 %d") % n)
 	_slot_hint = W.label("", 13, T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_LEFT, 600)
 	_slot_hint.autowrap_mode = TextServer.AUTOWRAP_WORD
 	_slot_hint.name = "SlotHint"
+	_slot_hint.visible = false
 	var slot_seg := W.segmented(slot_labels, save_slot - 1, func(i):
 		save_slot = i + 1
 		_refresh_slot_hint(), 16)
 	slot_seg.name = "SlotChoice"
-	v.add_child(_row("저장 슬롯", slot_seg))
+	var slot_row := _row("저장 슬롯", slot_seg)
+	slot_row.visible = false
+	v.add_child(slot_row)
 	v.add_child(_slot_hint)
 	_refresh_slot_hint()
-	# the rest are preferences, not choices about tonight's game: they open in their own panel (tabs, no scrolling)
-	var fold := W.button("환경 설정  ▸", "ghost", 15, Vector2(0, 36))
-	fold.name = "SettingsButton"
-	fold.pressed.connect(_show_settings)
+	# Action button to start game with chosen custom options
+	var start_custom_btn := W.button("START WITH THIS SETUP  ·  이 설정으로 시작", "primary", 18, Vector2(0, 50))
+	start_custom_btn.name = "CustomStartButton"
+	start_custom_btn.pressed.connect(_on_custom_start)
 	v.add_child(W.rule(1.0, 1))
-	v.add_child(fold)
+	v.add_child(start_custom_btn)
 	return p
 
 
@@ -532,6 +571,13 @@ func _refresh() -> void:
 		for i in range(player_count - 1):
 			who.append(T.AI_NAMES[i % T.AI_NAMES.size()])
 		_roster_lbl.text = " · ".join(who)
+	if _rule_hint != null and is_instance_valid(_rule_hint):
+		if player_count == 3:
+			_rule_hint.text = T.t("3인: 술집 4곳(Lincoln's, Jazz House 제외), 돈 카드 5장 분배, 빠른 게임 (RULE-030)")
+		elif player_count <= 6:
+			_rule_hint.text = T.t("4~6인: 술집 6곳, 돈 카드 7장 분배, 18장 제외, 결투 토너먼트 (RULE-029)")
+		else:
+			_rule_hint.text = T.t("7~8인: 술집 6곳, 전체 카드 사용, 돈 카드 7장 분배 (RULE-031)")
 
 
 func _config() -> Dictionary:
@@ -545,6 +591,66 @@ func _config() -> Dictionary:
 	if game_mode == "RELIC":
 		cfg["relics"] = []
 	return cfg
+
+
+func _on_quick_start() -> void:
+	Audio.play("card_snap")
+	if Settings.is_test_run() and not Settings.tutorial_done:
+		_ask_tutorial()
+		return
+	var target_slot := save_slot
+	if SaveStore.slot_info(target_slot)["exists"]:
+		var empty_slot := _default_slot()
+		if not SaveStore.slot_info(empty_slot)["exists"]:
+			target_slot = empty_slot
+		else:
+			_confirm_overwrite(SaveStore.slot_info(target_slot))
+			return
+	save_slot = target_slot
+	start_requested.emit(_config())
+
+
+func _show_custom_game() -> void:
+	if has_node("CustomGameModal"):
+		return
+	var vb := _modal("CustomGameModal")
+	vb.add_child(W.label(T.t("사용자 지정 게임 (CUSTOM GAME)"), 22, T.GOLD, "title", HORIZONTAL_ALIGNMENT_LEFT, 800))
+	if _custom_card.get_parent() != null:
+		_custom_card.get_parent().remove_child(_custom_card)
+	vb.add_child(_custom_card)
+	_refresh()
+	var close := W.button(T.t("닫기  ·  BACK"), "secondary", 16, Vector2(140, 42))
+	close.size_flags_horizontal = Control.SIZE_SHRINK_END
+	close.pressed.connect(func():
+		var m := get_node_or_null("CustomGameModal")
+		if m != null:
+			if _custom_card.get_parent() == vb:
+				vb.remove_child(_custom_card)
+				_custom_holder.add_child(_custom_card)
+			m.queue_free()
+			var btn := find_child("CustomGameButton", true, false) as Button
+			if btn != null:
+				btn.grab_focus.call_deferred()
+	)
+	vb.add_child(close)
+	var first := _custom_card.find_child("CustomStartButton", true, false) as Button
+	if first != null:
+		first.grab_focus.call_deferred()
+
+
+func _on_custom_start() -> void:
+	Audio.play("card_snap")
+	Settings.last_player_count = player_count
+	Settings.last_difficulty = difficulty
+	Settings.last_game_mode = game_mode
+	Settings.save_settings()
+	var m := get_node_or_null("CustomGameModal")
+	if m != null:
+		if _custom_card.get_parent() == m:
+			m.remove_child(_custom_card)
+			_custom_holder.add_child(_custom_card)
+		m.queue_free()
+	_on_start()
 
 
 func _on_start() -> void:
@@ -840,20 +946,28 @@ static func _diff_hint(d: String) -> String:
 			return "보통 — 균형 잡힌 상대. 가끔 실수해요."
 
 
-## B / Esc closes the panel on top (settings, slot list, overwrite question), like the help and records screens
+## B / Esc closes the panel on top (settings, slot list, overwrite question, custom game), like the help and records screens
 func _unhandled_input(event: InputEvent) -> void:
 	if not event.is_action_pressed("ui_cancel"):
 		return
-	for n in ["OverwriteAsk", "SlotPanel", "SettingsModal"]:
+	for n in ["OverwriteAsk", "SlotPanel", "SettingsModal", "CustomGameModal"]:
 		var m := get_node_or_null(n)
 		if m != null and not m.is_queued_for_deletion():
+			if n == "CustomGameModal" and _custom_card.get_parent() != _custom_holder:
+				_custom_card.get_parent().remove_child(_custom_card)
+				_custom_holder.add_child(_custom_card)
 			m.queue_free()
 			get_viewport().set_input_as_handled()
-			var b := find_child("NewGameButton", true, false) as Button
-			if b != null and n != "SettingsModal":
-				b.grab_focus.call_deferred()
+			if n == "CustomGameModal":
+				var cb := find_child("CustomGameButton", true, false) as Button
+				if cb != null:
+					cb.grab_focus.call_deferred()
 			elif n == "SettingsModal":
 				var sb := find_child("SettingsButton", true, false) as Button
 				if sb != null:
 					sb.grab_focus.call_deferred()
+			else:
+				var b := find_child("NewGameButton", true, false) as Button
+				if b != null:
+					b.grab_focus.call_deferred()
 			return

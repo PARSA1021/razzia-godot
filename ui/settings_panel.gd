@@ -56,9 +56,8 @@ static func build(u: float, ctx: Dictionary) -> VBoxContainer:
 				b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED     # each language names itself
 		g.add_child(_row(u, "언어 · Language", lgseg, false))
 	if menu:
-		var keys := Settings.SPEEDS.keys()
-		g.add_child(_row(u, "애니메이션 속도", W.segmented(["SLOW", "NORMAL", "FAST"], keys.find(Settings.speed_name), func(i):
-			Settings.speed_name = keys[i]
+		g.add_child(_row(u, "연출 속도", W.segmented(["보통 (1.0x)", "빠르게 (2.0x)"], 1 if Settings.speed_name == "FAST" else 0, func(i):
+			Settings.speed_name = "FAST" if i == 1 else "NORMAL"
 			Settings.save_settings(), int(16 * u))))
 	g.add_child(_row(u, "모션 줄이기", W.segmented(["OFF", "ON  (움직임만 줄임)"], 1 if Settings.reduce_motion else 0, func(i):
 		Settings.reduce_motion = i == 1
@@ -101,6 +100,44 @@ static func build(u: float, ctx: Dictionary) -> VBoxContainer:
 		d.add_child(dh)
 		labels.append("화면")
 		pages.append(d)
+
+	# --- 저장 관리 (Save Management)
+	var sm := _page(u)
+	var SaveStore = preload("res://ui/save_store.gd")
+	var slot_labels: Array = []
+	for n in SaveStore.SLOTS:
+		slot_labels.append(T.t("슬롯 %d") % n)
+	var active_slot_idx: int = clampi(SaveStore.slot - 1, 0, slot_labels.size() - 1)
+	var slot_hint := W.label("", int(14 * u), T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_LEFT, 500)
+	slot_hint.autowrap_mode = TextServer.AUTOWRAP_WORD
+	
+	var update_slot_hint := func(sn: int) -> void:
+		var info := SaveStore.slot_info(sn)
+		if not info["exists"]:
+			slot_hint.text = T.t("슬롯 %d: 비어 있음 (새 게임 시작 시 여기에 자동 저장됩니다)") % sn
+			slot_hint.add_theme_color_override("font_color", T.TEXT_DIM)
+		elif not info["ok"]:
+			slot_hint.text = T.t("슬롯 %d: 읽을 수 없는 저장 파일") % sn
+			slot_hint.add_theme_color_override("font_color", T.DANGER)
+		else:
+			var rnd: String = T.t("마지막 라운드") if info["final"] else (T.t("라운드 %d") % int(info["round"]))
+			slot_hint.text = T.t("슬롯 %d: %d인 · %s · 진행 중") % [sn, int(info["players"]), rnd]
+			slot_hint.add_theme_color_override("font_color", T.GOLD)
+			
+	update_slot_hint.call(SaveStore.slot)
+	
+	var slot_seg := W.segmented(slot_labels, active_slot_idx, func(i):
+		var chosen: int = i + 1
+		SaveStore.use_slot(chosen)
+		update_slot_hint.call(chosen)
+	, int(15 * u))
+	sm.add_child(_row(u, "저장 슬롯", slot_seg))
+	sm.add_child(slot_hint)
+	var sm_desc := W.label(T.t("게임은 활성 슬롯에 자동으로 저장됩니다. 기존 저장 파일은 안전하게 보관됩니다."), int(13 * u), T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_LEFT, 500)
+	sm_desc.autowrap_mode = TextServer.AUTOWRAP_WORD
+	sm.add_child(sm_desc)
+	labels.append("저장 관리")
+	pages.append(sm)
 
 	for e in ctx.get("extra", []):
 		labels.append(e[0])

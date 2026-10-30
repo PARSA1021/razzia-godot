@@ -68,6 +68,9 @@ static var quality := ""           # "" 자동 | "HIGH" | "BALANCED" | "BATTERY"
 static var language := "ko"         # "ko" | "en" (ui/i18n.gd). A new player gets the system language; a test run is always "ko"
 static var player_name := ""        # the human player's name; "" = the default ("나" / "You"), see display_name()
 static var quality_effective := "HIGH"   # 실제로 적용된 프리셋 (저장하지 않음, 매니저가 채움)
+static var last_player_count := 4
+static var last_difficulty := "NORMAL"
+static var last_game_mode := "CLASSIC"
 static var _loaded := false
 
 
@@ -105,6 +108,13 @@ static func load_settings() -> void:
 		quality = str(cf.get_value("display", "quality", ""))
 		if not quality in ["", "HIGH", "BALANCED", "BATTERY"]:
 			quality = ""
+		last_player_count = clampi(int(cf.get_value("general", "last_player_count", 4)), 3, 8)
+		last_difficulty = str(cf.get_value("general", "last_difficulty", "NORMAL"))
+		if not last_difficulty in ["EASY", "NORMAL", "HARD"]:
+			last_difficulty = "NORMAL"
+		last_game_mode = str(cf.get_value("general", "last_game_mode", "CLASSIC"))
+		if not last_game_mode in ["CLASSIC", "RELIC"]:
+			last_game_mode = "CLASSIC"
 	I18n.apply(language)
 
 
@@ -112,6 +122,9 @@ static func save_settings() -> void:
 	var cf := ConfigFile.new()
 	cf.set_value("general", "language", language)
 	cf.set_value("general", "player_name", player_name)
+	cf.set_value("general", "last_player_count", last_player_count)
+	cf.set_value("general", "last_difficulty", last_difficulty)
+	cf.set_value("general", "last_game_mode", last_game_mode)
 	cf.set_value("anim", "speed", speed_name)
 	cf.set_value("anim", "reduce_motion", reduce_motion)
 	cf.set_value("audio", "music", music_on)
