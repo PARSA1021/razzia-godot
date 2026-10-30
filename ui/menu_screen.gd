@@ -236,7 +236,7 @@ func _build_left() -> Control:
 	first = quick_start
 	
 	if not Settings.tutorial_done:
-		var tut_hint := W.label(T.t("💡 처음이라면 튜토리얼을 추천해요 (3분)"), 13, Color(T.GOLD, 0.95), "ui", HORIZONTAL_ALIGNMENT_CENTER, 600)
+		var tut_hint := W.label(T.t("처음이라면 튜토리얼을 추천해요 (3분)"), 13, Color(T.GOLD, 0.95), "ui", HORIZONTAL_ALIGNMENT_CENTER, 600)
 		v.add_child(tut_hint)
 	
 	# ② 이어하기 (저장된 게임이 있을 때만 표시)
@@ -328,13 +328,13 @@ func _build_tutorial_card() -> Control:
 	# Top voucher ribbon
 	var top_row := HBoxContainer.new()
 	top_row.add_theme_constant_override("separation", 8)
-	var sticker := _chip(T.t("🃏 시카고 카드룸 VIP 바우처"), T.GOLD if not Settings.tutorial_done else T.TEXT_DIM, 11)
+	var sticker := _chip(T.t("시카고 카드룸 VIP 바우처"), T.GOLD if not Settings.tutorial_done else T.TEXT_DIM, 11)
 	top_row.add_child(sticker)
 	if Settings.tutorial_done:
-		var done_badge := _chip(T.t("✓ 이수 완료 (복습 가능)"), T.OK, 11)
+		var done_badge := _chip(T.t("이수 완료 (복습 가능)"), T.OK, 11)
 		top_row.add_child(done_badge)
 	else:
-		var rec_badge := _chip(T.t("★ 신입 추천 코스"), T.DANGER, 11)
+		var rec_badge := _chip(T.t("신입 추천 코스"), T.DANGER, 11)
 		top_row.add_child(rec_badge)
 	var time_lbl := W.label(T.t("약 5분 실전 코스"), 12, T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_RIGHT, 500)
 	time_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -369,7 +369,7 @@ func _build_tutorial_card() -> Control:
 	# 4 Core rule chips
 	var badges := HBoxContainer.new()
 	badges.add_theme_constant_override("separation", 6)
-	for b_text in [T.t("🎲 주사위 결투"), T.t("🤝 판돈 협상"), T.t("🚨 경찰 단속"), T.t("💰 독점 보너스")]:
+	for b_text in [T.t("주사위 결투"), T.t("판돈 협상"), T.t("경찰 단속"), T.t("독점 보너스")]:
 		badges.add_child(_chip(b_text, Color(T.BRASS, 0.8), 11))
 	text_col.add_child(badges)
 	mid_row.add_child(text_col)
@@ -388,7 +388,7 @@ func _build_tutorial_card() -> Control:
 	)
 	btn_col.add_child(tut_btn)
 	
-	var rule_btn := W.button(T.t("📖 규칙 먼저 보기"), "ghost", 12, Vector2(175, 30))
+	var rule_btn := W.button(T.t("규칙 먼저 보기"), "ghost", 12, Vector2(175, 30))
 	rule_btn.name = "TutorialRuleButton"
 	rule_btn.pressed.connect(func():
 		Audio.play("click")

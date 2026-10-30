@@ -67,7 +67,7 @@ func _ready() -> void:
 	var title := W.label("게임 요약", 30, T.GOLD, "ui", HORIZONTAL_ALIGNMENT_LEFT, 800)
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	head.add_child(title)
-	var x := W.button("✕", "secondary", 22, Vector2(48, 44))
+	var x := W.button("X", "secondary", 22, Vector2(48, 44))
 	x.pressed.connect(close)
 	head.add_child(x)
 	v.add_child(head)

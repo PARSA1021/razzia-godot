@@ -136,7 +136,7 @@ class ExtraTag extends Control:
 		var line1 := ""
 		var line2 := ""
 		if intel:
-			line1 = "🕵️ %s" % bar.intel_target
+			line1 = T2.t("정보: %s") % bar.intel_target
 			line2 = T2.t("첩보 입수")
 		elif preview:
 			line1 = "+%s" % T2.money(bar.preview_extra)

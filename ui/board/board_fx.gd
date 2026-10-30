@@ -317,7 +317,7 @@ func _raid_caption(ev: Dictionary) -> String:
 	var cops: Array = ev.get("razzias", [])
 	var line := tr("도박꾼 %d명 퇴장  ·  판돈 %s → 경찰 %d명") % [outs.size(), T.money(int(ev.get("money", 0))), cops.size()]
 	if human_id in outs:
-		line = tr("🚨 [경찰 단속] 내 도박꾼이 쫓겨났습니다!") + "  ·  " + line
+		line = tr("[경찰 단속] 내 도박꾼이 쫓겨났습니다!") + "  ·  " + line
 	elif human_id in cops:
-		line = tr("🚨 [나의 경찰 단속 성공!] 도박꾼 일망타진!") + "  ·  " + line
+		line = tr("[단속 성공!] 도박꾼 일망타진!") + "  ·  " + line
 	return line

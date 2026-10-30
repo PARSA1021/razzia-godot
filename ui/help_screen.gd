@@ -65,7 +65,7 @@ func _ready() -> void:
 	head.add_child(_title)
 	_counter = W.label("", 16, T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_RIGHT, 700)
 	head.add_child(_counter)
-	var x := W.button("✕", "secondary", 22, Vector2(48, 44))
+	var x := W.button("X", "secondary", 22, Vector2(48, 44))
 	x.pressed.connect(close)
 	head.add_child(x)
 	v.add_child(head)
@@ -190,7 +190,7 @@ func _go(i: int, last_part: bool = false) -> void:
 	_title.text = _titles[_page]
 	_counter.text = "%d / %d" % [_page + 1, _titles.size()]
 	_prev.disabled = _page == 0
-	_next.text = "시작하기  ✓" if _page == _titles.size() - 1 else "다음  ▶"
+	_next.text = T.t("시작하기") if _page == _titles.size() - 1 else T.t("다음  ▶")
 	(_dots as Dots).set_state(_titles.size(), _page)
 	call("_page_%d" % _page)
 	_parts = [_body.get_children()]
@@ -273,7 +273,7 @@ func _build_cat_bar() -> Control:
 func _update_nav() -> void:
 	var more := _part < _parts.size() - 1
 	_prev.disabled = _page == 0 and _part == 0
-	_next.text = "다음  ▶" if (more or _page < _titles.size() - 1) else "시작하기  ✓"
+	_next.text = "다음  ▶" if (more or _page < _titles.size() - 1) else "시작하기"
 	_counter.text = ("%d / %d" % [_page + 1, _titles.size()]) + (("  (%d/%d)" % [_part + 1, _parts.size()]) if _parts.size() > 1 else "")
 	for i in range(CATEGORIES.size()):
 		if i < _cat_btns.size():
@@ -478,7 +478,7 @@ func _page_2() -> void:
 
 
 func _page_3() -> void:
-	_lead("카드의 점(주사위 눈)은 두 군데에 쓰여요. 이 게임에 별(★)은 없어요.")
+	_lead("카드의 점(주사위 눈)은 두 군데에 쓰여요. 이 게임에 별표는 없어요.")
 	_illus([_card_cap("ZOCKER", "HAVANA_BAR", 5, "눈 5"), _card_cap("ZOCKER", "HAVANA_BAR", 2, "눈 2")], 36)
 	var win := Eng.duel_win_probability(5, 2, true)
 	var f := _eq([W.label("눈", 17, T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_CENTER, 700), "5", "+", _die(4, 46), "=", "9"])
@@ -499,7 +499,7 @@ func _page_4() -> void:
 	r1.add_child(_chip("도박꾼 혼자 → 돈 전부", T.OK, 17))
 	var s2 := _bar_scene("COTTON_CLUB", "$30,000", [["ZOCKER", 4], ["ZOCKER", 2], ["RAZZIA", 3]], [0, 1])
 	var r2 := VBoxContainer.new()
-	r2.add_child(_chip("도박꾼 ✕ 쫓겨남", T.DANGER, 17))
+	r2.add_child(_chip("도박꾼 퇴장", T.DANGER, 17))
 	r2.add_child(_chip("RAZZIA가 돈 차지", T.OK, 17))
 	var s3 := _bar_scene("LINCOLNS", "$20,000", [["RAZZIA", 5]])
 	var r3 := VBoxContainer.new()
@@ -581,7 +581,7 @@ func _page_8() -> void:
 func _page_9() -> void:
 	_lead("처음 하면 많이 헷갈리는 점들")
 	var rows := [
-		["별(★)이 있나요?", "없어요. 카드의 점(주사위 눈)과 굴린 주사위 숫자만 써요.", T.GOLD],
+		["별표가 있나요?", "없어요. 카드의 점(주사위 눈)과 굴린 주사위 숫자만 써요.", T.GOLD],
 		["내 눈이 높으면 항상 이기나요?", "아니에요. 결투 점수에는 주사위(1~6)가 더해져 눈 차이가 작으면 뒤집혀요.", T.DANGER],
 		["동점이면?", "결투를 선언한 사람이 이겨요.", T.OK],
 		["RAZZIA만 내면?", "도박꾼이 없으면 돈을 못 받아요. 돈은 술집에 남아요.", T.POLICE_BLUE.lightened(0.3)],

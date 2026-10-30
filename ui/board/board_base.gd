@@ -321,7 +321,9 @@ func _update_relic_tray() -> void:
 	relic_tray.visible = true
 	for r in relics:
 		var badge := Button.new()
-		badge.text = "%s %s" % [str(r.get("icon", "🎁")), tr(str(r.get("name_ko", r.get("name", ""))))]
+		badge.text = tr(str(r.get("name_ko", r.get("name", ""))))
+		badge.icon = T.relic_icon(str(r.get("id", "")))
+		badge.expand_icon = true
 		badge.tooltip_text = tr(str(r.get("desc", "")))
 		badge.focus_mode = Control.FOCUS_NONE
 		badge.mouse_filter = Control.MOUSE_FILTER_PASS

@@ -40,7 +40,7 @@ func _ready() -> void:
 	var title := W.label("기록 · 업적", 30, T.GOLD, "ui", HORIZONTAL_ALIGNMENT_LEFT, 800)
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	head.add_child(title)
-	var x := W.button("✕", "secondary", 22, Vector2(48, 44))
+	var x := W.button("X", "secondary", 22, Vector2(48, 44))
 	x.pressed.connect(close)
 	head.add_child(x)
 	v.add_child(head)
@@ -193,7 +193,7 @@ func _build() -> void:
 		vb.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		vb.add_theme_constant_override("separation", 1)
 		pc.add_child(vb)
-		var title: String = ("★ " if unlocked else "") + T.t(str(info[0])) + ("   NEW" if id in highlight else "")
+		var title: String = ("[달성] " if unlocked else "") + T.t(str(info[0])) + ("   NEW" if id in highlight else "")
 		vb.add_child(W.label(title if unlocked else "???  " + T.t(str(info[0])), 17, T.GOLD if unlocked else T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_LEFT, 800))
 		var d := W.label(str(info[1]), 13, T.TEXT if unlocked else T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_LEFT, 600)
 		d.autowrap_mode = TextServer.AUTOWRAP_WORD

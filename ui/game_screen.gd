@@ -240,8 +240,8 @@ func _ask_human(pending: Dictionary) -> Dictionary:
 			var RelicManager = preload("res://engine/relic_manager.gd")
 			var intel: Dictionary = RelicManager.get_informant_intel(state, human_id) if human_id != "" else {}
 			if not intel.is_empty():
-				_now(tr("🕵️ 정보원: %s 가 %s 로 향합니다") % [intel["targetName"], intel["barName"]])
-				_toast(tr("🕵️ [정보원] %s → %s") % [intel["targetName"], intel["barName"]], 2.8)
+				_now(tr("정보원: %s 가 %s 로 향합니다") % [intel["targetName"], intel["barName"]])
+				_toast(tr("[정보원] %s → %s") % [intel["targetName"], intel["barName"]], 2.8)
 				if bar_views.has(intel["barId"]):
 					bar_views[intel["barId"]].set_intel(intel["targetName"])
 			else:

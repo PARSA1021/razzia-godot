@@ -107,9 +107,9 @@ func _play_event(ev: Dictionary) -> void:
 			Audio.play("coin")
 			var rid: String = str(ev.get("relicId", ""))
 			if rid == "bribed_judge":
-				_toast(tr("⚖️ [매수한 판사] 판사가 매수되어 결투 동점에서 승리했습니다!"), 2.2)
+				_toast(tr("[매수한 판사] 판사가 매수되어 결투 동점에서 승리했습니다!"), 2.2)
 			elif rid == "dirty_cop":
-				_toast(tr("🚨 [부패한 경관] 단속 실패 뇌물 %s 수취!") % T.money(int(ev.get("amount", 0))), 2.2)
+				_toast(tr("[부패한 경관] 단속 실패 뇌물 %s 수취!") % T.money(int(ev.get("amount", 0))), 2.2)
 		_:
 			pass
 
@@ -310,9 +310,9 @@ func _ev_bar_resolved(ev: Dictionary) -> void:
 			var cops: Array = ev.get("razzias", [])
 			if human_id in cops:
 				Audio.play("denied")
-				_now_live(func(): return tr("🚨 RAZZIA 허탕! %s에 도박꾼이 없어 단속 실패 · 판돈 %s 유지") % [T.bar_name(id), T.money(int(ev.get("money", 0)))])
+				_now_live(func(): return tr("[단속 허탕] %s에 도박꾼이 없어 단속 실패 · 판돈 %s 유지") % [T.bar_name(id), T.money(int(ev.get("money", 0)))])
 			elif not cops.is_empty():
-				_now_live(func(): return tr("🚨 RAZZIA 허탕 · %s에 도박꾼이 없어 %s의 단속 실패 · 판돈 %s 유지") % [T.bar_name(id), _nm(cops[0]), T.money(int(ev.get("money", 0)))])
+				_now_live(func(): return tr("[단속 허탕] %s에 도박꾼이 없어 %s의 단속 실패 · 판돈 %s 유지") % [T.bar_name(id), _nm(cops[0]), T.money(int(ev.get("money", 0)))])
 			else:
 				_now_live(func(): return tr("도박꾼이 없어 돈이 그대로 남습니다"))
 			await _wait(TIMINGS.RAZZIA_NO_ZOCKER)

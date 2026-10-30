@@ -387,7 +387,7 @@ func _render_stage() -> void:
 		var border := Color(T.BRASS, 0.35)
 		if i < _stage:
 			col = T.OK
-			txt = "✓ " + T.t(labels[i])
+			txt = T.t(labels[i])
 			border = Color(T.OK, 0.5)
 		elif i == _stage:
 			col = Color("1a120e")
@@ -490,10 +490,10 @@ func _render_rows() -> void:
 		if pid != neg["proposerId"] and not proposal.is_empty():
 			match marks.get(pid, ""):
 				"ACCEPT":
-					mk = "✓ 수락"
+					mk = tr("수락")
 					mc = T.OK
 				"DUEL":
-					mk = "⚔ 결투"
+					mk = tr("결투")
 					mc = T.DANGER
 				_:
 					mk = "대기…"
@@ -631,8 +631,15 @@ func begin_duel(ev: Dictionary) -> void:
 			face_box.add_child(me)
 		vb.add_child(face_box)
 		var is_ch: bool = pid == ev["challengerId"]
-		var role_tag := W.label(T.t("[⚔️ 도전자]") if is_ch else T.t("[🛡️ 방어자]"), _fs(13), Color("ff6b5a") if is_ch else Color("6ab4ff"), "ui", HORIZONTAL_ALIGNMENT_CENTER, 800)
-		vb.add_child(role_tag)
+		var role_box := HBoxContainer.new()
+		role_box.alignment = BoxContainer.ALIGNMENT_CENTER
+		role_box.add_theme_constant_override("separation", int(_fs(4)))
+		var role_icon_tex := T.system_icon("challenger" if is_ch else "defender")
+		var role_icon := W.icon_rect(role_icon_tex, Vector2(_fs(14), _fs(14)), Color("ff6b5a") if is_ch else Color("6ab4ff"))
+		role_box.add_child(role_icon)
+		var role_lbl := W.label(tr("도전자") if is_ch else tr("방어자"), _fs(13), Color("ff6b5a") if is_ch else Color("6ab4ff"), "ui", HORIZONTAL_ALIGNMENT_CENTER, 800)
+		role_box.add_child(role_lbl)
+		vb.add_child(role_box)
 		vb.add_child(W.label(_nm(pid) + (_me_tag(pid)), _fs(24 if big else 19), T.TEXT, "ui", HORIZONTAL_ALIGNMENT_CENTER, 700))
 		vb.add_child(W.label(T.t("카드 눈 %d") % int(ev["symbol" + side]), _fs(14), T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_CENTER, 600))
 		var other_sym: int = int(ev["symbolB" if side == "A" else "symbolA"])
@@ -832,8 +839,8 @@ func finish_duel(ev: Dictionary) -> void:
 		if ev["winnerId"] == _duel_ev["challengerId"]:
 			set_status(T.t("동점 (%d vs %d) — 룰에 따라 결투를 선언한 도전자(%s) 승리!") % [int(ev["scoreA"]), int(ev["scoreB"]), _nm(ev["winnerId"])])
 		else:
-			set_status(T.t("동점 (%d vs %d) — ⚖️ 매수한 판사 판정으로 %s 승리!") % [int(ev["scoreA"]), int(ev["scoreB"]), _nm(ev["winnerId"])])
-			_duel_tag.text = T.t("⚖️ 매수한 판사 판정! 동점 규칙 무효화")
+			set_status(T.t("동점 (%d vs %d) — 매수한 판사 판정으로 %s 승리!") % [int(ev["scoreA"]), int(ev["scoreB"]), _nm(ev["winnerId"])])
+			_duel_tag.text = T.t("매수한 판사 판정! 동점 규칙 무효화")
 	else:
 		set_status(T.t("점수 비교 (%d vs %d) — 점수가 높은 %s 승리!") % [int(ev["scoreA"]), int(ev["scoreB"]), _nm(ev["winnerId"])])
 
@@ -1021,7 +1028,7 @@ func ask_response(view: Dictionary) -> String:
 		chosen.add_theme_stylebox_override("disabled", W.sb(Color(col, 0.22), col, 4, 12, Vector4(10, 8, 10, 8)))
 		other.add_theme_stylebox_override("disabled", W.sb(Color("1d1710"), Color(T.BRASS, 0.25), 1, 12, Vector4(10, 8, 10, 8)))
 		other.modulate = Color(1, 1, 1, 0.45)
-		(chosen.get_meta("title_label") as Label).text = "✔ 수락 확정" if kind == "ACCEPT" else "⚔ 결투 선언"
+		(chosen.get_meta("title_label") as Label).text = tr("수락 확정") if kind == "ACCEPT" else tr("결투 선언")
 		Audio.play("confirm")
 		set_status(T.t("%s — 잠시만요…") % T.t("수락했어요" if kind == "ACCEPT" else "결투를 선언했어요"))
 		await _pause(0.35)                                       # the choice stays visible for a moment (no extra click needed)

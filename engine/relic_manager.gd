@@ -16,7 +16,7 @@ extends RefCounted
 const RELICS := {
 	"lucky_coin": {
 		"id": "lucky_coin",
-		"icon": "🪙",
+		"icon": "lucky_coin",
 		"name": "Lucky Coin",
 		"name_ko": "행운의 동전",
 		"type": "DUEL",
@@ -27,7 +27,7 @@ const RELICS := {
 	},
 	"protection_racket": {
 		"id": "protection_racket",
-		"icon": "🥊",
+		"icon": "protection_racket",
 		"name": "Protection Racket",
 		"name_ko": "보호세 수금원",
 		"type": "ECONOMY",
@@ -38,7 +38,7 @@ const RELICS := {
 	},
 	"informant": {
 		"id": "informant",
-		"icon": "🕵️",
+		"icon": "informant",
 		"name": "The Informant",
 		"name_ko": "비밀 정보원",
 		"type": "INFO",
@@ -49,7 +49,7 @@ const RELICS := {
 	},
 	"swiss_account": {
 		"id": "swiss_account",
-		"icon": "🏦",
+		"icon": "swiss_account",
 		"name": "Swiss Account",
 		"name_ko": "스위스 비밀계좌",
 		"type": "ECONOMY",
@@ -60,7 +60,7 @@ const RELICS := {
 	},
 	"bribed_judge": {
 		"id": "bribed_judge",
-		"icon": "⚖️",
+		"icon": "bribed_judge",
 		"name": "Bribed Judge",
 		"name_ko": "매수한 판사",
 		"type": "DUEL",
@@ -71,7 +71,7 @@ const RELICS := {
 	},
 	"loaded_dice": {
 		"id": "loaded_dice",
-		"icon": "🎲",
+		"icon": "loaded_dice",
 		"name": "Loaded Dice",
 		"name_ko": "조작된 주사위",
 		"type": "DUEL",
@@ -82,7 +82,7 @@ const RELICS := {
 	},
 	"dirty_cop": {
 		"id": "dirty_cop",
-		"icon": "🚨",
+		"icon": "dirty_cop",
 		"name": "Dirty Cop",
 		"name_ko": "부패한 경관",
 		"type": "ECONOMY",
@@ -93,7 +93,7 @@ const RELICS := {
 	},
 	"syndicate_crest": {
 		"id": "syndicate_crest",
-		"icon": "⚜️",
+		"icon": "syndicate_crest",
 		"name": "Syndicate Crest",
 		"name_ko": "신디케이트 문장",
 		"type": "SYNERGY",

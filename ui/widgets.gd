@@ -359,7 +359,11 @@ class PlayerChip extends Control:
 			T.note_text(self, dfs, "DEALER")
 			draw_string(T.font("title", 800), Vector2(r.position.x + 6, r.position.y + r.size.y * 0.5 + dfs * 0.35), "DEALER", HORIZONTAL_ALIGNMENT_LEFT, -1, dfs, Color("1a120e"))
 		if is_ready:
-			draw_string(T.font("ui", 800), Vector2(size.x - h * 0.42, h * 0.86), "✓", HORIZONTAL_ALIGNMENT_LEFT, -1, int(h * 0.36), T.OK)
+			var cx := size.x - h * 0.32
+			var cy := h * 0.55
+			var cs := h * 0.16
+			draw_line(Vector2(cx - cs, cy), Vector2(cx - cs * 0.2, cy + cs), T.OK, 2.0, true)
+			draw_line(Vector2(cx - cs * 0.2, cy + cs), Vector2(cx + cs * 1.2, cy - cs), T.OK, 2.0, true)
 
 
 ## A six-sided die face (used by the duel scene). `value` 0 = blank ("?" while `idle`).
