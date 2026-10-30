@@ -111,6 +111,17 @@ static func label(text: String, size: int, color: Color = T.TEXT, kind: String =
 	return l
 
 
+static func icon_rect(tex: Texture2D, min_size: Vector2 = Vector2.ZERO, modulate: Color = Color.WHITE) -> TextureRect:
+	var tr := TextureRect.new()
+	tr.texture = tex
+	tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	tr.custom_minimum_size = min_size
+	tr.modulate = modulate
+	tr.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return tr
+
+
 ## Applies the look of a button kind: "primary" (gold) | "secondary" (dark) | "danger" (red) | "active" (selected segment: gold outline on dark).
 static func set_kind(b: Button, kind: String, size: int = -1) -> void:
 	if size > 0:

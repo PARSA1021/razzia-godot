@@ -233,6 +233,35 @@ static func police_icon() -> Texture2D:
 static func money_clip_icon() -> Texture2D:
 	return _load_tex_file("res://assets/icons/money_clip.svg")
 
+const RELIC_ICONS := {
+	"lucky_coin": "res://assets/icons/relics/lucky_coin.svg",
+	"protection_racket": "res://assets/icons/relics/protection_racket.svg",
+	"informant": "res://assets/icons/relics/informant.svg",
+	"swiss_account": "res://assets/icons/relics/swiss_account.svg",
+	"bribed_judge": "res://assets/icons/relics/bribed_judge.svg",
+	"loaded_dice": "res://assets/icons/relics/loaded_dice.svg",
+	"dirty_cop": "res://assets/icons/relics/dirty_cop.svg",
+	"syndicate_crest": "res://assets/icons/relics/syndicate_crest.svg",
+}
+
+const SYSTEM_ICONS := {
+	"reroll": "res://assets/icons/system/reroll.svg",
+	"challenger": "res://assets/icons/system/challenger.svg",
+	"defender": "res://assets/icons/system/defender.svg",
+	"police_raid": "res://assets/icons/system/police_raid.svg",
+	"lock": "res://assets/icons/system/lock.svg",
+	"die_face": "res://assets/icons/system/die_face.svg",
+	"fallback_relic": "res://assets/icons/relics/fallback_relic.svg",
+}
+
+static func relic_icon(relic_id: String) -> Texture2D:
+	var p: String = RELIC_ICONS.get(relic_id, "res://assets/icons/relics/fallback_relic.svg")
+	return _load_tex_file(p)
+
+static func system_icon(name: String) -> Texture2D:
+	var p: String = SYSTEM_ICONS.get(name, "")
+	return _load_tex_file(p) if p != "" else null
+
 
 ## ---- illustrations (assets/art): venue posters + gambler / police portraits ----
 static var _art := {}
