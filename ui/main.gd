@@ -107,6 +107,9 @@ func _new_game() -> Control:
 		cfg["names"] = names
 		cfg["seed"] = int(Time.get_unix_time_from_system()) & 0x7fffffff
 		cfg["slot"] = SaveStore.slot     # NEW GAME after a game: the same slot
+		var RelicManager = preload("res://engine/relic_manager.gd")
+		if RelicManager.is_relic_mode(g.state):
+			cfg["relics"] = []
 		_start_new(cfg))
 	_swap(g)
 	return g

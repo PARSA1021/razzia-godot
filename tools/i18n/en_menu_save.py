@@ -38,8 +38,10 @@ T = {
 "저장 관리": "Save Management",
 # Rematch & Result gap (Task 3)
 "한 판 더 (REMATCH)": "REMATCH",
+"한 판 더  ·  REMATCH (NEW GAME)": "REMATCH (NEW GAME)",
 "REMATCH  ·  한 판 더": "REMATCH",
 "MAIN MENU  ·  메인 메뉴": "MAIN MENU",
 "1위 %s와 %s 차이": "Behind 1st place %s by %s",
-"2위 %s와 %s 차이로 승리!": "Won by %s over 2nd place %s!",
+"2위 %s와 %s 차이로 승리!": "Won against 2nd place %s by %s!",
+"공동 1위 달성!": "Tied for 1st place!",
 }

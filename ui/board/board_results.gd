@@ -365,6 +365,30 @@ func _ev_game_ended(ev: Dictionary) -> void:
 		headline = "YOU WIN!"
 	vb.add_child(W.label(headline, int(40 * u), T.GOLD, "stamp", HORIZONTAL_ALIGNMENT_CENTER))
 	vb.add_child(W.label(tr("%d라운드 · 최종 정산") % int(state["round"]), int(15 * u), T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_CENTER, 600))
+	var ranking: Array = ev.get("ranking", [])
+	if human_id != "" and ranking.size() >= 2:
+		var my_rank := 1
+		var my_money := 0
+		for idx in range(ranking.size()):
+			if str(ranking[idx]["playerId"]) == human_id:
+				my_rank = idx + 1
+				my_money = int(ranking[idx]["money"])
+				break
+		var gap_text := ""
+		if my_rank == 1:
+			var r2: Dictionary = ranking[1]
+			var diff := my_money - int(r2["money"])
+			if diff > 0:
+				gap_text = tr("2위 %s와 %s 차이로 승리!") % [_nm(r2["playerId"]), T.money(diff)]
+			else:
+				gap_text = tr("공동 1위 달성!")
+		else:
+			var r1: Dictionary = ranking[0]
+			var diff := int(r1["money"]) - my_money
+			gap_text = tr("1위 %s와 %s 차이") % [_nm(r1["playerId"]), T.money(diff)]
+		if gap_text != "":
+			var gap_lbl := W.label(gap_text, int(16 * u), T.GOLD if human_id in ev["winnerIds"] else T.TEXT, "ui", HORIZONTAL_ALIGNMENT_CENTER, 700)
+			vb.add_child(gap_lbl)
 	vb.add_child(W.rule(u, 1))
 	var rank := 1
 	for r in ev["ranking"]:
@@ -401,8 +425,10 @@ func _ev_game_ended(ev: Dictionary) -> void:
 		for id in new_achievements:
 			ach.add_child(W.label("%s — %s" % [tr(Records.ACHIEVEMENTS[id][0]), tr(Records.ACHIEVEMENTS[id][1])], int(14 * u), T.TEXT, "ui", HORIZONTAL_ALIGNMENT_CENTER, 600))
 		vb.add_child(ach)
-	var again := W.button("NEW GAME", "primary", int(20 * u), Vector2(190.0 * u, 52.0 * u))
-	var menu := W.button("MENU", "secondary", int(20 * u), Vector2(150.0 * u, 52.0 * u))
+	var again := W.button("한 판 더  ·  REMATCH (NEW GAME)", "primary", int(21 * u), Vector2(240.0 * u, 54.0 * u))
+	again.name = "RematchButton"
+	var menu := W.button("MAIN MENU  ·  메인 메뉴", "secondary", int(18 * u), Vector2(170.0 * u, 54.0 * u))
+	menu.name = "MenuButton"
 	btns.add_child(again)
 	btns.add_child(menu)
 	vb.add_child(btns)
@@ -415,4 +441,11 @@ func _ev_game_ended(ev: Dictionary) -> void:
 	modal_layer.add_child(panel)
 	modal_layer.mouse_filter = Control.MOUSE_FILTER_PASS
 	SaveStore.clear()
+	again.disabled = true
 	W.arm_focus(again, 0.6)
+	get_tree().create_timer(0.6, true, false, true).timeout.connect(func():
+		if is_instance_valid(again):
+			again.disabled = false
+			if again.is_visible_in_tree():
+				again.grab_focus()
+	)
