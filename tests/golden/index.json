@@ -1,0 +1,522 @@
+[
+ {
+  "file": "g_3p_NORMAL_1.json",
+  "playerCount": 3,
+  "aiDifficulty": "NORMAL",
+  "seed": 1,
+  "humanPlayerId": null,
+  "rounds": 15,
+  "actions": 72,
+  "events": 283
+ },
+ {
+  "file": "g_3p_NORMAL_2.json",
+  "playerCount": 3,
+  "aiDifficulty": "NORMAL",
+  "seed": 2,
+  "humanPlayerId": null,
+  "rounds": 15,
+  "actions": 72,
+  "events": 278
+ },
+ {
+  "file": "g_3p_NORMAL_3.json",
+  "playerCount": 3,
+  "aiDifficulty": "NORMAL",
+  "seed": 3,
+  "humanPlayerId": null,
+  "rounds": 15,
+  "actions": 78,
+  "events": 291
+ },
+ {
+  "file": "g_3p_NORMAL_7.json",
+  "playerCount": 3,
+  "aiDifficulty": "NORMAL",
+  "seed": 7,
+  "humanPlayerId": null,
+  "rounds": 15,
+  "actions": 78,
+  "events": 284
+ },
+ {
+  "file": "g_3p_NORMAL_42.json",
+  "playerCount": 3,
+  "aiDifficulty": "NORMAL",
+  "seed": 42,
+  "humanPlayerId": null,
+  "rounds": 15,
+  "actions": 71,
+  "events": 277
+ },
+ {
+  "file": "g_3p_NORMAL_12345.json",
+  "playerCount": 3,
+  "aiDifficulty": "NORMAL",
+  "seed": 12345,
+  "humanPlayerId": null,
+  "rounds": 15,
+  "actions": 73,
+  "events": 270
+ },
+ {
+  "file": "g_3p_EASY_1.json",
+  "playerCount": 3,
+  "aiDifficulty": "EASY",
+  "seed": 1,
+  "humanPlayerId": null,
+  "rounds": 15,
+  "actions": 83,
+  "events": 290
+ },
+ {
+  "file": "g_3p_EASY_2.json",
+  "playerCount": 3,
+  "aiDifficulty": "EASY",
+  "seed": 2,
+  "humanPlayerId": null,
+  "rounds": 15,
+  "actions": 73,
+  "events": 279
+ },
+ {
+  "file": "g_3p_EASY_3.json",
+  "playerCount": 3,
+  "aiDifficulty": "EASY",
+  "seed": 3,
+  "humanPlayerId": null,
+  "rounds": 15,
+  "actions": 77,
+  "events": 287
+ },
+ {
+  "file": "g_3p_EASY_7.json",
+  "playerCount": 3,
+  "aiDifficulty": "EASY",
+  "seed": 7,
+  "humanPlayerId": null,
+  "rounds": 15,
+  "actions": 83,
+  "events": 292
+ },
+ {
+  "file": "g_3p_EASY_42.json",
+  "playerCount": 3,
+  "aiDifficulty": "EASY",
+  "seed": 42,
+  "humanPlayerId": null,
+  "rounds": 15,
+  "actions": 73,
+  "events": 279
+ },
+ {
+  "file": "g_3p_EASY_12345.json",
+  "playerCount": 3,
+  "aiDifficulty": "EASY",
+  "seed": 12345,
+  "humanPlayerId": null,
+  "rounds": 15,
+  "actions": 78,
+  "events": 276
+ },
+ {
+  "file": "g_4p_NORMAL_1.json",
+  "playerCount": 4,
+  "aiDifficulty": "NORMAL",
+  "seed": 1,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 82,
+  "events": 298
+ },
+ {
+  "file": "g_4p_NORMAL_2.json",
+  "playerCount": 4,
+  "aiDifficulty": "NORMAL",
+  "seed": 2,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 71,
+  "events": 276
+ },
+ {
+  "file": "g_4p_NORMAL_3.json",
+  "playerCount": 4,
+  "aiDifficulty": "NORMAL",
+  "seed": 3,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 74,
+  "events": 287
+ },
+ {
+  "file": "g_4p_NORMAL_99.json",
+  "playerCount": 4,
+  "aiDifficulty": "NORMAL",
+  "seed": 99,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 83,
+  "events": 296
+ },
+ {
+  "file": "g_4p_EASY_1.json",
+  "playerCount": 4,
+  "aiDifficulty": "EASY",
+  "seed": 1,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 75,
+  "events": 281
+ },
+ {
+  "file": "g_4p_EASY_2.json",
+  "playerCount": 4,
+  "aiDifficulty": "EASY",
+  "seed": 2,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 75,
+  "events": 290
+ },
+ {
+  "file": "g_4p_EASY_3.json",
+  "playerCount": 4,
+  "aiDifficulty": "EASY",
+  "seed": 3,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 79,
+  "events": 302
+ },
+ {
+  "file": "g_4p_EASY_99.json",
+  "playerCount": 4,
+  "aiDifficulty": "EASY",
+  "seed": 99,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 71,
+  "events": 282
+ },
+ {
+  "file": "g_5p_NORMAL_1.json",
+  "playerCount": 5,
+  "aiDifficulty": "NORMAL",
+  "seed": 1,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 91,
+  "events": 320
+ },
+ {
+  "file": "g_5p_NORMAL_2.json",
+  "playerCount": 5,
+  "aiDifficulty": "NORMAL",
+  "seed": 2,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 96,
+  "events": 332
+ },
+ {
+  "file": "g_5p_NORMAL_3.json",
+  "playerCount": 5,
+  "aiDifficulty": "NORMAL",
+  "seed": 3,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 99,
+  "events": 342
+ },
+ {
+  "file": "g_5p_NORMAL_99.json",
+  "playerCount": 5,
+  "aiDifficulty": "NORMAL",
+  "seed": 99,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 96,
+  "events": 338
+ },
+ {
+  "file": "g_5p_EASY_1.json",
+  "playerCount": 5,
+  "aiDifficulty": "EASY",
+  "seed": 1,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 88,
+  "events": 318
+ },
+ {
+  "file": "g_5p_EASY_2.json",
+  "playerCount": 5,
+  "aiDifficulty": "EASY",
+  "seed": 2,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 96,
+  "events": 332
+ },
+ {
+  "file": "g_5p_EASY_3.json",
+  "playerCount": 5,
+  "aiDifficulty": "EASY",
+  "seed": 3,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 87,
+  "events": 314
+ },
+ {
+  "file": "g_5p_EASY_99.json",
+  "playerCount": 5,
+  "aiDifficulty": "EASY",
+  "seed": 99,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 94,
+  "events": 327
+ },
+ {
+  "file": "g_6p_NORMAL_1.json",
+  "playerCount": 6,
+  "aiDifficulty": "NORMAL",
+  "seed": 1,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 109,
+  "events": 360
+ },
+ {
+  "file": "g_6p_NORMAL_2.json",
+  "playerCount": 6,
+  "aiDifficulty": "NORMAL",
+  "seed": 2,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 113,
+  "events": 374
+ },
+ {
+  "file": "g_6p_NORMAL_3.json",
+  "playerCount": 6,
+  "aiDifficulty": "NORMAL",
+  "seed": 3,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 111,
+  "events": 366
+ },
+ {
+  "file": "g_6p_NORMAL_99.json",
+  "playerCount": 6,
+  "aiDifficulty": "NORMAL",
+  "seed": 99,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 125,
+  "events": 409
+ },
+ {
+  "file": "g_6p_EASY_1.json",
+  "playerCount": 6,
+  "aiDifficulty": "EASY",
+  "seed": 1,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 104,
+  "events": 350
+ },
+ {
+  "file": "g_6p_EASY_2.json",
+  "playerCount": 6,
+  "aiDifficulty": "EASY",
+  "seed": 2,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 102,
+  "events": 345
+ },
+ {
+  "file": "g_6p_EASY_3.json",
+  "playerCount": 6,
+  "aiDifficulty": "EASY",
+  "seed": 3,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 116,
+  "events": 363
+ },
+ {
+  "file": "g_6p_EASY_99.json",
+  "playerCount": 6,
+  "aiDifficulty": "EASY",
+  "seed": 99,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 108,
+  "events": 353
+ },
+ {
+  "file": "g_7p_NORMAL_1.json",
+  "playerCount": 7,
+  "aiDifficulty": "NORMAL",
+  "seed": 1,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 141,
+  "events": 416
+ },
+ {
+  "file": "g_7p_NORMAL_2.json",
+  "playerCount": 7,
+  "aiDifficulty": "NORMAL",
+  "seed": 2,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 123,
+  "events": 391
+ },
+ {
+  "file": "g_7p_NORMAL_3.json",
+  "playerCount": 7,
+  "aiDifficulty": "NORMAL",
+  "seed": 3,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 135,
+  "events": 408
+ },
+ {
+  "file": "g_7p_NORMAL_99.json",
+  "playerCount": 7,
+  "aiDifficulty": "NORMAL",
+  "seed": 99,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 138,
+  "events": 433
+ },
+ {
+  "file": "g_7p_EASY_1.json",
+  "playerCount": 7,
+  "aiDifficulty": "EASY",
+  "seed": 1,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 133,
+  "events": 395
+ },
+ {
+  "file": "g_7p_EASY_2.json",
+  "playerCount": 7,
+  "aiDifficulty": "EASY",
+  "seed": 2,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 127,
+  "events": 386
+ },
+ {
+  "file": "g_7p_EASY_3.json",
+  "playerCount": 7,
+  "aiDifficulty": "EASY",
+  "seed": 3,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 116,
+  "events": 361
+ },
+ {
+  "file": "g_7p_EASY_99.json",
+  "playerCount": 7,
+  "aiDifficulty": "EASY",
+  "seed": 99,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 118,
+  "events": 372
+ },
+ {
+  "file": "g_8p_NORMAL_1.json",
+  "playerCount": 8,
+  "aiDifficulty": "NORMAL",
+  "seed": 1,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 141,
+  "events": 419
+ },
+ {
+  "file": "g_8p_NORMAL_2.json",
+  "playerCount": 8,
+  "aiDifficulty": "NORMAL",
+  "seed": 2,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 146,
+  "events": 439
+ },
+ {
+  "file": "g_8p_NORMAL_3.json",
+  "playerCount": 8,
+  "aiDifficulty": "NORMAL",
+  "seed": 3,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 158,
+  "events": 463
+ },
+ {
+  "file": "g_8p_NORMAL_99.json",
+  "playerCount": 8,
+  "aiDifficulty": "NORMAL",
+  "seed": 99,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 159,
+  "events": 466
+ },
+ {
+  "file": "g_8p_EASY_1.json",
+  "playerCount": 8,
+  "aiDifficulty": "EASY",
+  "seed": 1,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 137,
+  "events": 425
+ },
+ {
+  "file": "g_8p_EASY_2.json",
+  "playerCount": 8,
+  "aiDifficulty": "EASY",
+  "seed": 2,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 134,
+  "events": 398
+ },
+ {
+  "file": "g_8p_EASY_3.json",
+  "playerCount": 8,
+  "aiDifficulty": "EASY",
+  "seed": 3,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 142,
+  "events": 425
+ },
+ {
+  "file": "g_8p_EASY_99.json",
+  "playerCount": 8,
+  "aiDifficulty": "EASY",
+  "seed": 99,
+  "humanPlayerId": null,
+  "rounds": 12,
+  "actions": 133,
+  "events": 399
+ }
+]
