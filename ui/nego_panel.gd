@@ -465,10 +465,8 @@ func _render_rows() -> void:
 		nv.add_theme_constant_override("separation", 0)
 		var nm := _nm(pid) + _me_tag(pid)
 		nv.add_child(W.label(nm, _fs(22), T.TEXT, "ui", HORIZONTAL_ALIGNMENT_LEFT, 800))
-		var pl: String = str(Characters.info(personalities.get(pid))["label"])
-		var sub := ((T.t("제안자") + "  ") if is_prop else "") + (T.t(pl) if pl != "" and pid != human_id else "")
-		if sub.strip_edges() != "":
-			nv.add_child(W.label(sub.strip_edges(), _fs(13), T.GOLD if is_prop else T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_LEFT, 700))
+		if is_prop:
+			nv.add_child(W.label(T.t("제안자"), _fs(13), T.GOLD, "ui", HORIZONTAL_ALIGNMENT_LEFT, 700))
 		hb.add_child(nv)
 		var die := W.DieView.new()                      # the card's eye as a real die face (the same pips as the rules)
 		die.custom_minimum_size = Vector2(_fs(34), _fs(34))
@@ -516,7 +514,7 @@ func say(pid: String, situation: String, seed_n: int) -> void:
 	var line := Characters.line_for(_nm(pid), personalities[pid], situation, seed_n)
 	if line == "":
 		return
-	_speech.text = "%s (%s): \"%s\"" % [_nm(pid), Characters.info(personalities[pid])["label"], line]
+	_speech.text = "%s: \"%s\"" % [_nm(pid), line]
 	_speech.add_theme_font_size_override("font_size", _fs(16))
 	_speech_face.personality = personalities[pid]
 	_speech_face.character = _nm(pid)
@@ -644,7 +642,8 @@ func begin_duel(ev: Dictionary) -> void:
 		vb.add_child(W.label(T.t("카드 눈 %d") % int(ev["symbol" + side]), _fs(14), T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_CENTER, 600))
 		var other_sym: int = int(ev["symbolB" if side == "A" else "symbolA"])
 		var chance := Eng.duel_win_probability(int(ev["symbol" + side]), other_sym, is_ch)
-		vb.add_child(W.label(T.t("이길 확률 약 %d%%") % int(round(chance * 100.0)), _fs(15), T.GOLD, "ui", HORIZONTAL_ALIGNMENT_CENTER, 700))
+		if Settings.beginner_hints:
+			vb.add_child(W.label(T.t("이길 확률 약 %d%%") % int(round(chance * 100.0)), _fs(15), T.GOLD, "ui", HORIZONTAL_ALIGNMENT_CENTER, 700))
 		vb.add_child(Control.new())
 		var die := W.DieView.new()
 		die.custom_minimum_size = Vector2(dsz, dsz)
@@ -991,8 +990,14 @@ func ask_response(view: Dictionary) -> String:
 			if is_instance_valid(bt) and is_instance_valid(v):
 				bt.custom_minimum_size.y = maxf(bt.custom_minimum_size.y, v.get_combined_minimum_size().y + 16.0)).call_deferred()
 		return bt
-	var acc: Button = mk.call("ACCEPT", tr("수락"), T.money(offer), tr("지금 바로 받는 확실한 금액"), tr("위험 없음"), offer > ev_duel, T.OK)
-	var duel: Button = mk.call("DUEL", tr("결투"), T.t("승률 %d%%") % int(round(chance * 100.0)), T.t("이기면 %s · 지면 $0") % T.money(pot), T.t("기대값 약 %s") % T.money(ev_duel), duel_better, T.DANGER)
+	var acc: Button
+	var duel: Button
+	if Settings.beginner_hints:
+		acc = mk.call("ACCEPT", tr("수락"), T.money(offer), tr("지금 바로 받는 확실한 금액"), tr("위험 없음"), offer > ev_duel, T.OK)
+		duel = mk.call("DUEL", tr("결투"), T.t("승률 %d%%") % int(round(chance * 100.0)), T.t("이기면 %s · 지면 $0") % T.money(pot), T.t("기대값 약 %s") % T.money(ev_duel), duel_better, T.DANGER)
+	else:
+		acc = mk.call("ACCEPT", tr("수락"), T.money(offer), tr("지금 바로 받는 확실한 금액"), tr("위험 없음"), false, T.OK)
+		duel = mk.call("DUEL", tr("결투"), T.money(pot), T.t("이기면 %s · 지면 $0") % T.money(pot), tr("위험 부담"), false, T.DANGER)
 	acc.text = "ACCEPT"
 	duel.text = "DUEL"
 	acc.add_theme_color_override("font_color", Color(0, 0, 0, 0))             # the card's own labels carry the text; these keep the button text searchable
@@ -1005,7 +1010,9 @@ func ask_response(view: Dictionary) -> String:
 	hb.add_child(duel)
 	# which card is better on average is said in words here (the cards only mark it with their frame): a long marker
 	# inside the card ran out of it on a small screen
-	var better_note := T.t("평균적으로는 결투가 더 유리") if duel_better else (T.t("평균적으로는 수락이 더 유리") if offer > ev_duel else "")
+	var better_note := ""
+	if Settings.beginner_hints:
+		better_note = T.t("평균적으로는 결투가 더 유리") if duel_better else (T.t("평균적으로는 수락이 더 유리") if offer > ev_duel else "")
 	var note := W.label(((better_note + "  ·  ") if better_note != "" else "") + T.t("결투는 도박입니다. 동점이면 결투를 건 사람이 이겨요."), _fs(13), T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_CENTER, 600)
 	note.autowrap_mode = TextServer.AUTOWRAP_WORD
 	_action_box.add_child(note)
@@ -1079,11 +1086,14 @@ func ask_proposal(view: Dictionary) -> Dictionary:
 			amount_labels[o].text = T.money(a)
 			preview[o] = a
 			# what o can expect from calling a duel against me (they would win both shares)
-			var p_o := Eng.duel_win_probability(int(n["symbols"][o]), int(n["symbols"][me]), true)
-			var ev := p_o * float(a + mine)
-			var likely := float(a) >= ev
-			hints[o].text = T.t("결투하면 상대 기대값 약 %s (승률 %d%%) → %s") % [T.money(int(round(ev / float(Eng.MONEY_STEP))) * Eng.MONEY_STEP), int(round(p_o * 100.0)), T.t("수락할 가능성 높음" if likely else "결투를 걸 수 있음")]
-			hints[o].add_theme_color_override("font_color", T.OK if likely else T.DANGER)
+			if Settings.beginner_hints:
+				var p_o := Eng.duel_win_probability(int(n["symbols"][o]), int(n["symbols"][me]), true)
+				var ev := p_o * float(a + mine)
+				var likely := float(a) >= ev
+				hints[o].text = T.t("결투하면 상대 기대값 약 %s (승률 %d%%) → %s") % [T.money(int(round(ev / float(Eng.MONEY_STEP))) * Eng.MONEY_STEP), int(round(p_o * 100.0)), T.t("수락할 가능성 높음" if likely else "결투를 걸 수 있음")]
+				hints[o].add_theme_color_override("font_color", T.OK if likely else T.DANGER)
+			else:
+				hints[o].text = ""
 			syncing[0] = true
 			sliders[o].value = a
 			syncing[0] = false
@@ -1147,7 +1157,8 @@ func ask_proposal(view: Dictionary) -> Dictionary:
 	var sugg_btn := W.button("추천", "secondary", _fs(15), Vector2(_fs(90), _fs(44)))
 	var even_btn := W.button("균등 분배", "secondary", _fs(15), Vector2(_fs(110), _fs(44)))
 	var greedy_btn := W.button("내가 많이", "secondary", _fs(15), Vector2(_fs(110), _fs(44)))
-	presets.add_child(sugg_btn)
+	if Settings.beginner_hints:
+		presets.add_child(sugg_btn)
 	presets.add_child(even_btn)
 	presets.add_child(greedy_btn)
 	var ok_btn := W.button(tr("제안 전달"), "primary", _fs(20), Vector2(_fs(300), _fs(52)))

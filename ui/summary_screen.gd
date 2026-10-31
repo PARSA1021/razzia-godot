@@ -194,11 +194,11 @@ func _build(body: VBoxContainer) -> void:
 	body = _pages[2]
 	body.add_child(_section("플레이어별 기록"))
 	var grid := GridContainer.new()
-	grid.columns = 6
+	grid.columns = 5
 	grid.add_theme_constant_override("h_separation", 14)
 	grid.add_theme_constant_override("v_separation", 6)
 	grid.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	for h in ["", "최종", "결투", "RAZZIA", "독점", "성격"]:
+	for h in ["", "최종", "결투", "RAZZIA", "독점"]:
 		grid.add_child(W.label(h, 14, T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_CENTER if h != "" else HORIZONTAL_ALIGNMENT_LEFT, 700))
 	var ranking: Array = []
 	for e in state["events"]:
@@ -227,8 +227,6 @@ func _build(body: VBoxContainer) -> void:
 		grid.add_child(W.label(T.t("%d승 %d패") % [int(d["duel_wins"]), int(d["duels"]) - int(d["duel_wins"])], 15, T.TEXT, "ui", HORIZONTAL_ALIGNMENT_CENTER, 600))
 		grid.add_child(W.label("%d" % int(d["razzias"]), 15, T.TEXT, "ui", HORIZONTAL_ALIGNMENT_CENTER, 600))
 		grid.add_child(W.label("%d" % int(d["solo_wins"]), 15, T.TEXT, "ui", HORIZONTAL_ALIGNMENT_CENTER, 600))
-		var ch := Chars.info(Eng_player(pid).get("personality", null))
-		grid.add_child(W.label(str(ch["label"]) if str(ch["label"]) != "" else "—", 15, T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_CENTER, 600))
 	body.add_child(grid)
 
 

@@ -607,7 +607,7 @@ func _spacer(w: float) -> Control:
 
 
 func _page_10() -> void:
-	_lead("AI는 자리마다 성격이 달라요. 협상 화면에 이름 옆에 표시됩니다.")
+	_lead("AI는 저마다 다른 스타일과 성향을 지니고 있어요. 협상 중 대사와 반응을 통해 상대의 성향을 파악해 보세요.")
 	# duel-call share measured by tools/ai_sim.gd (6 players, all NORMAL, 1500 games): how often the AI answers an offer with DUEL
 	var stat := {"CONSERVATIVE": 51, "OPPORTUNIST": 69, "AGGRESSIVE": 86}
 	var tiles: Array = []

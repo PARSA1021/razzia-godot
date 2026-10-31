@@ -66,6 +66,9 @@ static func build(u: float, ctx: Dictionary) -> VBoxContainer:
 		Settings.dialogue_on = i != 2
 		Settings.dialogue_mid = i == 0
 		Settings.save_settings(), int(15 * u))))
+	g.add_child(_row(u, "초보자 힌트", W.segmented(["OFF", "ON"], 1 if Settings.beginner_hints else 0, func(i):
+		Settings.beginner_hints = i == 1
+		Settings.save_settings(), int(15 * u))))
 	if menu:
 		g.add_child(_row(u, "처음 안내", W.segmented(["ON", "OFF"], 0 if Settings.coach_on else 1, func(i):
 			Settings.coach_on = i == 0

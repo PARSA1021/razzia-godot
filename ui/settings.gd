@@ -71,6 +71,7 @@ static var quality_effective := "HIGH"   # 실제로 적용된 프리셋 (저장
 static var last_player_count := 4
 static var last_difficulty := "NORMAL"
 static var last_game_mode := "CLASSIC"
+static var beginner_hints := false  # 초보자 힌트: 승률·기대값·추천 버튼 노출 여부 (기본값: false)
 static var _loaded := false
 
 
@@ -115,6 +116,7 @@ static func load_settings() -> void:
 		last_game_mode = str(cf.get_value("general", "last_game_mode", "CLASSIC"))
 		if not last_game_mode in ["CLASSIC", "RELIC"]:
 			last_game_mode = "CLASSIC"
+		beginner_hints = bool(cf.get_value("general", "beginner_hints", false))
 	I18n.apply(language)
 
 
@@ -125,6 +127,7 @@ static func save_settings() -> void:
 	cf.set_value("general", "last_player_count", last_player_count)
 	cf.set_value("general", "last_difficulty", last_difficulty)
 	cf.set_value("general", "last_game_mode", last_game_mode)
+	cf.set_value("general", "beginner_hints", beginner_hints)
 	cf.set_value("anim", "speed", speed_name)
 	cf.set_value("anim", "reduce_motion", reduce_motion)
 	cf.set_value("audio", "music", music_on)

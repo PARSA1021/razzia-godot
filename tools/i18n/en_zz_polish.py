@@ -221,4 +221,7 @@ T = {
 "[달성] ": "[Completed] ",
 "카드의 점(주사위 눈)은 두 군데에 쓰여요. 이 게임에 별표는 없어요.": "The dots on a card (its pip) matter in two places. There are no stars in this game.",
 "별표가 있나요?": "Are there stars?",
+"AI는 저마다 다른 스타일과 성향을 지니고 있어요. 협상 중 대사와 반응을 통해 상대의 성향을 파악해 보세요.": "Each AI rival has their own temperament and play style. Read their words and reactions to understand their intentions.",
+"위험 부담": "Risk · All or Nothing",
+"초보자 힌트": "Beginner Hints",
 }
