@@ -282,7 +282,7 @@ func _fx_razzia(ev: Dictionary = {}) -> void:
 	tw.tween_callback(func(): Audio.play("stamp")).set_delay(stamp_at)
 	# the table jolts when the stamp hits (a few pixels, settles in ~0.2 s)
 	var base_pos := position
-	if not Settings.reduce_motion:
+	if not Settings.reduce_motion and Settings.screen_shake:
 		var shake := create_tween()
 		tws.append(shake)
 		shake.tween_interval(stamp_at + Settings.dur(0.12))

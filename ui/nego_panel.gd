@@ -34,6 +34,8 @@ var side_x0 := 0.0
 var side_x1 := 0.0
 var skipping: Callable = Callable()    # returns true while the player asked to skip
 
+static var session_first_duel := true
+
 var neg := {}                # NEGOTIATION_STARTED event
 var proposal := {}           # playerId -> amount (empty until PROPOSAL_MADE)
 var marks := {}              # playerId -> "ACCEPT" | "DUEL"
@@ -639,6 +641,9 @@ func begin_duel(ev: Dictionary) -> void:
 		pv.add_child(_pot_label)
 		plaque.add_child(pv)
 		_duel_box.add_child(plaque)
+
+	var tie_notice := W.label(T.t("동점 시 도전자(%s) 승리") % _nm(ev["challengerId"]), _fs(13), Color(T.BRASS, 0.95), "ui", HORIZONTAL_ALIGNMENT_CENTER, 800)
+	_duel_box.add_child(tie_notice)
 	var hb := HBoxContainer.new()
 	hb.add_theme_constant_override("separation", _fs(24))
 	hb.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -730,7 +735,11 @@ func begin_duel(ev: Dictionary) -> void:
 	_duel_box.add_child(_duel_tag)
 	set_stage(2)
 	Audio.tension(true)
-	set_status("결투! 각자 주사위를 한 번 굴려 카드의 눈과 더합니다. 점수가 높은 쪽이 남은 돈을 가져가요.")
+	if session_first_duel:
+		session_first_duel = false
+		set_status(tr("결투! 각자 주사위를 한 번 굴려 카드의 눈과 더합니다. 점수가 높은 쪽이 남은 돈을 가져가요."))
+	else:
+		set_status(tr("결투! 각자의 주사위와 카드의 눈을 합산합니다."))
 	reset_size()
 	_queue_fit()
 
@@ -743,47 +752,100 @@ func _compact_screen() -> bool:
 	return ph < 640.0 or pw < 520.0
 
 
-## Tumbling dice for show; the engine already decided the numbers (RULE-034). The two dice land one after the other
-## (A, then B) so the result builds up; any skip / reduced motion lands everything at once.
+func _panel_shake(off: Vector2) -> void:
+	if not Settings.screen_shake or Settings.reduce_motion or not is_inside_tree():
+		return
+	var orig := position
+	var tw := create_tween()
+	tw.tween_property(self, "position", orig + off * u, 0.04)
+	tw.tween_property(self, "position", orig - off * u * 0.6, 0.04)
+	tw.tween_property(self, "position", orig, 0.04)
+
+
+## Tumbling dice: Defender lands and reveals first, then Challenger lands and reveals second.
+## Timings scale with Settings.speed_name; A/Space fast-forwards cleanly while keeping numbers readable.
 func set_rolls(ev: Dictionary) -> void:
 	if _die_a == null or duel_phase != DuelPhase.INTRO:
-		return                                  # a second DICE_ROLLED (or one without a duel) changes nothing
+		return
 	duel_phase = DuelPhase.ROLLING
 	if _face_a != null:
 		_face_a.emotion = "NERVOUS"
 	if _face_b != null:
 		_face_b.emotion = "NERVOUS"
 	var token := _duel_token
-	var da: Control = _die_a
-	var db: Control = _die_b
-	var ra := int(ev["rollA"])
-	var rb := int(ev["rollB"])
-	var ta := Settings.dur(0.95)
-	var tb := Settings.dur(1.2)
+
+	# Defender lands first; Challenger lands second
+	var def_side := "B" if _duel_ev.get("playerA", "") == _duel_ev.get("challengerId", "") else "A"
+	var ch_side := "A" if def_side == "B" else "B"
+
+	var def_die: Control = _die_a if def_side == "A" else _die_b
+	var ch_die: Control = _die_b if def_side == "A" else _die_a
+	var def_sum: Label = _sum_a if def_side == "A" else _sum_b
+	var ch_sum: Label = _sum_b if def_side == "A" else _sum_a
+	var def_roll := int(ev.get("roll" + def_side, 1))
+	var ch_roll := int(ev.get("roll" + ch_side, 1))
+	var def_sym := int(_duel_ev.get("symbol" + def_side, 1))
+	var ch_sym := int(_duel_ev.get("symbol" + ch_side, 1))
+	var def_face: Control = _face_a if def_side == "A" else _face_b
+	var ch_face: Control = _face_b if def_side == "A" else _face_a
+
+	var ta := Settings.dur(0.85)
+	var tb := Settings.dur(1.25)
+
 	if _skip() or ta <= 0.0:
-		da.land(ra)
-		db.land(rb)
+		def_die.land(def_roll)
+		_land_text(def_sum, def_sym, def_roll)
+		ch_die.land(ch_roll)
+		_land_text(ch_sum, ch_sym, ch_roll)
 	else:
-		da.tumble(ra, ta, 1.0)         # started without await: both dice roll at the same time, B simply lands a little later
-		db.tumble(rb, tb, -1.0)
+		def_die.tumble(def_roll, ta, 1.0)
+		ch_die.tumble(ch_roll, tb, -1.0)
 		var t := 0.0
-		while t < ta + 0.2 and not _skip() and is_instance_valid(da):
+		var fast_forward := false
+		while t < ta + 0.15 and not _skip() and is_instance_valid(def_die) and not fast_forward:
+			if t > 0.1 and (Input.is_action_just_pressed("ui_accept") or Input.is_key_pressed(KEY_SPACE) or Input.is_joy_button_pressed(0, JOY_BUTTON_A)):
+				fast_forward = true
+				break
 			await get_tree().process_frame
 			t += get_process_delta_time()
-		if is_instance_valid(da) and da.value == ra and not _skip():
-			_land_text(_sum_a, int(_duel_ev["symbolA"]), ra)
-			if _face_a != null:
-				_face_a.emotion = "CONFIDENT" if ra >= 4 else "NERVOUS"
-		while t < tb + 0.35 and not _skip() and is_instance_valid(db):
+
+		# Defender lands and reveals first
+		if is_instance_valid(def_die) and not _skip():
+			def_die.land(def_roll)
+			_land_text(def_sum, def_sym, def_roll)
+			if Settings.screen_shake and not Settings.reduce_motion:
+				_panel_shake(Vector2(0, 3.5))
+			Audio.play("dice")
+			if def_face != null:
+				def_face.emotion = "CONFIDENT" if def_roll >= 4 else "NERVOUS"
+
+		# Challenger delay pause (ensures defender numbers are comfortably readable)
+		var pause_dur := 0.2 if fast_forward else Settings.dur(0.4)
+		var pt := 0.0
+		while pt < pause_dur and not _skip():
 			await get_tree().process_frame
-			t += get_process_delta_time()
-		if _skip() and is_instance_valid(da):
-			da.land(ra)
-			db.land(rb)
+			pt += get_process_delta_time()
+
+		# Challenger lands and reveals second
+		if is_instance_valid(ch_die) and not _skip():
+			ch_die.land(ch_roll)
+			_land_text(ch_sum, ch_sym, ch_roll)
+			if Settings.screen_shake and not Settings.reduce_motion:
+				_panel_shake(Vector2(0, 4.5))
+			Audio.play("dice")
+			if ch_face != null:
+				ch_face.emotion = "CONFIDENT" if ch_roll >= 4 else "NERVOUS"
+
+		if _skip():
+			def_die.land(def_roll)
+			_land_text(def_sum, def_sym, def_roll)
+			ch_die.land(ch_roll)
+			_land_text(ch_sum, ch_sym, ch_roll)
+
 	if _die_a == null or token != _duel_token:
 		return
-	_land_text(_sum_a, int(_duel_ev["symbolA"]), ra)
-	_land_text(_sum_b, int(_duel_ev["symbolB"]), rb)
+	_land_text(def_sum, def_sym, def_roll)
+	_land_text(ch_sum, ch_sym, ch_roll)
 	duel_phase = DuelPhase.REVEAL
 
 
@@ -968,17 +1030,81 @@ func _finish_close() -> void:
 func ask_roll() -> void:
 	_clear(_action_box)
 	set_status(tr("내 차례예요. 버튼을 눌러 주사위를 굴리세요."))
-	var b := W.button(tr("주사위 던지기"), "primary", _fs(20), Vector2(_fs(300), _fs(56)))
+	var b := W.button(tr("주사위 던지기"), "primary", _fs(20), Vector2(_fs(320), _fs(56)))
 	b.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	_action_box.add_child(b)
-	b.pressed.connect(func(): decided.emit(true), CONNECT_ONE_SHOT)
+
+	var sub_lbl := W.label(tr("A / Space 길게 누르면 흔들기 · 놓으면 굴리기"), _fs(12), T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_CENTER, 700)
+	_action_box.add_child(sub_lbl)
+
+	var holding := [false]
+	var hold_time := [0.0]
+	var rolled := [false]
+
+	var do_roll := func():
+		if rolled[0]:
+			return
+		rolled[0] = true
+		b.disabled = true
+		b.text = tr("주사위 굴리는 중…")
+		Audio.play("confirm")
+		decided.emit(true)
+
+	var start_shake := func():
+		if rolled[0] or holding[0]:
+			return
+		holding[0] = true
+		hold_time[0] = 0.0
+		b.text = tr("주사위 흔드는 중… (놓으면 굴리기)")
+
+	var stop_shake := func():
+		if holding[0]:
+			holding[0] = false
+			do_roll.call()
+
+	b.button_down.connect(func(): start_shake.call())
+	b.button_up.connect(func(): stop_shake.call())
+	b.pressed.connect(func():
+		if not rolled[0]:
+			do_roll.call())
+
 	W.arm_focus(b, 0.5)
-	if not Settings.reduce_motion:
-		b.pivot_offset = Vector2(_fs(165), _fs(28))
-		var pulse := b.create_tween().set_loops()
-		pulse.tween_property(b, "scale", Vector2(1.04, 1.04), 0.6).set_trans(Tween.TRANS_SINE)
-		pulse.tween_property(b, "scale", Vector2.ONE, 0.6).set_trans(Tween.TRANS_SINE)
-	await decided
+
+	# Keyboard / gamepad hold monitoring loop
+	var tick_timer := 0.0
+	while not rolled[0] and is_instance_valid(b) and is_visible_in_tree():
+		await get_tree().process_frame
+		var dt: float = get_process_delta_time()
+		var key_or_pad_held := Input.is_action_pressed("ui_accept") or Input.is_joy_button_pressed(0, JOY_BUTTON_A) or Input.is_key_pressed(KEY_SPACE)
+		if key_or_pad_held and not holding[0] and not rolled[0]:
+			start_shake.call()
+		elif not key_or_pad_held and holding[0]:
+			stop_shake.call()
+			break
+
+		if holding[0]:
+			hold_time[0] += dt
+			tick_timer += dt
+			if tick_timer >= 0.12:
+				tick_timer = 0.0
+				Audio.play("tick")
+			if _die_a != null and is_instance_valid(_die_a):
+				_die_a.rotation = randf_range(-0.12, 0.12)
+			if _die_b != null and is_instance_valid(_die_b):
+				_die_b.rotation = randf_range(-0.12, 0.12)
+			if Settings.screen_shake and not Settings.reduce_motion and int(hold_time[0] * 10.0) % 2 == 0:
+				b.position += Vector2(randf_range(-1.5, 1.5), randf_range(-1.5, 1.5))
+			if hold_time[0] >= 1.8:
+				stop_shake.call()
+				break
+
+	if _die_a != null and is_instance_valid(_die_a):
+		_die_a.rotation = 0.0
+	if _die_b != null and is_instance_valid(_die_b):
+		_die_b.rotation = 0.0
+
+	if not rolled[0]:
+		await decided
 	_clear(_action_box)
 
 

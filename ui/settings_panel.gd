@@ -66,6 +66,12 @@ static func build(u: float, ctx: Dictionary) -> VBoxContainer:
 		Settings.dialogue_on = i != 2
 		Settings.dialogue_mid = i == 0
 		Settings.save_settings(), int(15 * u))))
+	g.add_child(_row(u, "다른 플레이어 결투", W.segmented(["축약", "크게 보기"], 0 if Settings.ai_duel_mode == "COMPACT" else 1, func(i):
+		Settings.ai_duel_mode = "COMPACT" if i == 0 else "FULL"
+		Settings.save_settings(), int(15 * u))))
+	g.add_child(_row(u, "화면 흔들림", W.segmented(["ON", "OFF"], 0 if Settings.screen_shake else 1, func(i):
+		Settings.screen_shake = i == 0
+		Settings.save_settings(), int(15 * u))))
 	g.add_child(_row(u, "초보자 힌트", W.segmented(["OFF", "ON"], 1 if Settings.beginner_hints else 0, func(i):
 		Settings.beginner_hints = i == 1
 		Settings.save_settings(), int(15 * u))))

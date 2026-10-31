@@ -72,6 +72,8 @@ static var last_player_count := 4
 static var last_difficulty := "NORMAL"
 static var last_game_mode := "CLASSIC"
 static var beginner_hints := false  # 초보자 힌트: 승률·기대값·추천 버튼 노출 여부 (기본값: false)
+static var screen_shake := true     # 화면 흔들림 효과 (false = 흔들림 0)
+static var ai_duel_mode := "COMPACT" # "COMPACT" (축약) | "FULL" (크게 보기)
 static var _loaded := false
 
 
@@ -117,6 +119,10 @@ static func load_settings() -> void:
 		if not last_game_mode in ["CLASSIC", "RELIC"]:
 			last_game_mode = "CLASSIC"
 		beginner_hints = bool(cf.get_value("general", "beginner_hints", false))
+		screen_shake = bool(cf.get_value("display", "screen_shake", true))
+		ai_duel_mode = str(cf.get_value("anim", "ai_duel_mode", "COMPACT"))
+		if not ai_duel_mode in ["COMPACT", "FULL"]:
+			ai_duel_mode = "COMPACT"
 	I18n.apply(language)
 
 
@@ -142,8 +148,10 @@ static func save_settings() -> void:
 	cf.set_value("anim", "coach", coach_on)
 	cf.set_value("anim", "tutorial_done", tutorial_done)
 	cf.set_value("anim", "dialogue_mid", dialogue_mid)
+	cf.set_value("anim", "ai_duel_mode", ai_duel_mode)
 	cf.set_value("display", "mode", display_mode)
 	cf.set_value("display", "quality", quality)
+	cf.set_value("display", "screen_shake", screen_shake)
 	cf.save(path)
 
 

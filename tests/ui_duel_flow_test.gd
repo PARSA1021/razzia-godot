@@ -112,19 +112,23 @@ func _run() -> void:
 			continue
 		var modal_next: Button = null
 		for b in game.modal_layer.find_children("*", "Button", true, false):
-			if "NEXT ROUND" in b.text and b.is_visible_in_tree():
+			if ("NEXT ROUND" in b.text or "다음 라운드" in b.text) and b.is_visible_in_tree():
 				modal_next = b
 		if modal_next != null:
 			await _frames(30)
 			modal_next.emit_signal("pressed")
 			await _frames(5)
 			continue
-		var offer := _btn("MAKE OFFER")
+		var offer := _btn("제안 전달")
+		if offer == null:
+			offer = _btn("MAKE OFFER")
 		if offer != null:
 			await _frames(40)
 			offer.emit_signal("pressed")
 			continue
-		var roll := _btn("ROLL")
+		var roll := _btn("주사위 던지기")
+		if roll == null:
+			roll = _btn("ROLL")
 		if roll != null:
 			await _frames(45)                  # the button arms its focus after a short guard
 			await _key(KEY_ENTER)
