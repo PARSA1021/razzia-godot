@@ -21,6 +21,9 @@ const TIMINGS := {
 	"AWARD_NEGO": 0.60,            # 협상 타결 돈 지급 연출 (기존 유지)
 }
 
+var _compact_duel: Control = null
+var _compact_duel_ev := {}
+
 
 ## ===================================================================== event replay
 
@@ -73,30 +76,68 @@ func _play_event(ev: Dictionary) -> void:
 		"DUEL_STARTED":
 			await _ev_duel_started(ev)
 		"DICE_ROLLED":
-			Audio.play("dice")
-			await nego.set_rolls(ev)
-			await _wait(TIMINGS.DICE_ROLLED)
-		"DUEL_RESOLVED":
-			if _is_me(ev["playerA"]) or _is_me(ev["playerB"]):
-				Audio.play("duel_win" if _is_me(ev["winnerId"]) else "duel_lose")
-			nego.finish_duel(ev)
-			var loser_id: String = ev["playerB"] if ev["winnerId"] == ev["playerA"] else ev["playerA"]
-			nego.say(ev["winnerId"], "win", int(ev.get("seq", 0)))
-			if _is_me(ev["winnerId"]):
-				nego.say(loser_id, "lose", int(ev.get("seq", 0)))
-			if (_is_me(ev["playerA"]) or _is_me(ev["playerB"])) and not skip and not bot.is_valid():
-				Trace.log("duel", "result shown, waiting for the player's confirmation")
-				await nego.ask_continue()
-				# a big pot decided against the human gets a short reaction (at most twice a game, never two rounds in a row)
-				var pot := int(nego.neg.get("prize", 0)) if not nego.neg.is_empty() else 0
-				if pot >= 50000 and _scene_big_duels < 2 and _mid_scene_ok():
-					var opp_id: String = ev["playerB"] if _is_me(ev["playerA"]) else ev["playerA"]
-					for pl in _ai_players():
-						if pl["id"] == opp_id:
-							_scene_big_duels += 1
-							await _mid_scene("duel", {"actor": pl, "ai_won": ev["winnerId"] == opp_id, "ctx": {"bar": T.bar_name(str(ev["barId"])), "pot": T.money(pot)}})
+			if _compact_duel != null and is_instance_valid(_compact_duel):
+				Audio.play("dice")
+				_compact_duel.set_rolls(ev)
+				await _wait(0.35)
 			else:
-				await _wait(TIMINGS.DUEL_RESOLVE_AI)
+				Audio.play("dice")
+				await nego.set_rolls(ev)
+				await _wait(TIMINGS.DICE_ROLLED)
+		"DUEL_RESOLVED":
+			var me_in := _is_me(ev["playerA"]) or _is_me(ev["playerB"])
+			if me_in:
+				Audio.play("duel_win" if _is_me(ev["winnerId"]) else "duel_lose")
+			elif not skip:
+				Audio.play("ching")
+
+			# Record detailed duel outcome in _round_reason for settlement screen
+			var bar_id: String = str(ev.get("barId", ""))
+			if bar_id != "":
+				var win_id: String = ev["winnerId"]
+				var s_a := int(ev.get("scoreA", 0))
+				var s_b := int(ev.get("scoreB", 0))
+				var win_s := maxi(s_a, s_b)
+				var lose_s := mini(s_a, s_b)
+				var tie_str := (" · " + tr("동점 도전자")) if bool(ev.get("tie", false)) else ""
+				_round_reason[bar_id] = tr("결투: %s 승 (%d vs %d%s)") % [_nm(win_id), win_s, lose_s, tie_str]
+
+			if _compact_duel != null and is_instance_valid(_compact_duel):
+				_compact_duel.resolve(ev)
+				var pot: int = int(_compact_duel_ev.get("prize", 0))
+				if pot > 0 and bar_views.has(bar_id):
+					var bv: BarView = bar_views[bar_id]
+					var win_id: String = ev["winnerId"]
+					var start_pos := bv.global_center()
+					var target_pos := start_pos + Vector2(0, -60.0 * u)
+					if chips.has(win_id) and is_instance_valid(chips[win_id]):
+						var ch: Control = chips[win_id]
+						target_pos = ch.get_global_transform_with_canvas() * Vector2(ch.size.x * 0.5, ch.size.y * 0.5)
+					_float_pot_to_winner(pot, start_pos, target_pos)
+				await _wait(0.55)
+				if is_instance_valid(_compact_duel):
+					_compact_duel.fade_out_and_free()
+				_compact_duel = null
+				_compact_duel_ev = {}
+			else:
+				nego.finish_duel(ev)
+				var loser_id: String = ev["playerB"] if ev["winnerId"] == ev["playerA"] else ev["playerA"]
+				nego.say(ev["winnerId"], "win", int(ev.get("seq", 0)))
+				if _is_me(ev["winnerId"]):
+					nego.say(loser_id, "lose", int(ev.get("seq", 0)))
+				if me_in and not skip and not bot.is_valid():
+					Trace.log("duel", "result shown, waiting for the player's confirmation")
+					await nego.ask_continue()
+					# a big pot decided against the human gets a short reaction (at most twice a game, never two rounds in a row)
+					var pot := int(nego.neg.get("prize", 0)) if not nego.neg.is_empty() else 0
+					if pot >= 50000 and _scene_big_duels < 2 and _mid_scene_ok():
+						var opp_id: String = ev["playerB"] if _is_me(ev["playerA"]) else ev["playerA"]
+						for pl in _ai_players():
+							if pl["id"] == opp_id:
+								_scene_big_duels += 1
+								await _mid_scene("duel", {"actor": pl, "ai_won": ev["winnerId"] == opp_id, "ctx": {"bar": T.bar_name(str(ev["barId"])), "pot": T.money(pot)}})
+				else:
+					await _wait(TIMINGS.DUEL_RESOLVE_AI)
 		"MONEY_AWARDED":
 			await _ev_money_awarded(ev)
 		"ROUND_ENDED":
@@ -123,6 +164,10 @@ func _ev_round_started(ev: Dictionary) -> void:
 		bar_views[id].clear_minis()
 		bar_views[id].set_extra(0, "")
 	_drop_held_extra()
+	if _compact_duel != null and is_instance_valid(_compact_duel):
+		_compact_duel.queue_free()
+		_compact_duel = null
+	_compact_duel_ev.clear()
 	_round_awards.clear()
 	_round_reason.clear()
 	_round_plays.clear()
@@ -359,12 +404,31 @@ func _ev_negotiation_started(ev: Dictionary) -> void:
 
 
 func _ev_duel_started(ev: Dictionary) -> void:
+	var me_in := _is_me(ev["playerA"]) or _is_me(ev["playerB"])
+	if not me_in and Settings.ai_duel_mode == "COMPACT":
+		if nego != null and is_instance_valid(nego) and nego.visible:
+			nego.close()
+		if dim != null and is_instance_valid(dim):
+			dim.visible = false
+		_compact_duel_ev = ev
+		var CompactDuel = preload("res://ui/compact_duel_view.gd")
+		var cd = CompactDuel.new()
+		_compact_duel = cd
+		modal_layer.add_child(cd)
+		cd.setup(ev, names, u)
+		var bar_id: String = str(ev.get("barId", ""))
+		if bar_views.has(bar_id):
+			cd.position_over_bar(bar_views[bar_id], u, size)
+		if not skip:
+			Audio.play("drumroll")
+		await _wait(0.3)
+		return
+
 	nego.begin_duel(ev)
 	dim.color = Color(0.01, 0.03, 0.02, 0.78)          # the duel stage: the table steps back
 	dim.visible = true
 	if not skip:
 		Audio.play("drumroll")
-	var me_in := _is_me(ev["playerA"]) or _is_me(ev["playerB"])
 	if me_in and not skip:
 		if bot.is_valid():
 			await get_tree().process_frame

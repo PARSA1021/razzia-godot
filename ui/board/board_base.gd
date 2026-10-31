@@ -379,6 +379,25 @@ func _float_text(text: String, from_global: Vector2, color: Color, size_k: float
 	tw.chain().tween_callback(l.queue_free)
 
 
+func _float_pot_to_winner(amount: int, from_global: Vector2, to_global: Vector2) -> void:
+	var l := W.label("+" + T.money(amount), int(round(20.0 * u)), T.GOLD, "money", HORIZONTAL_ALIGNMENT_CENTER, 800)
+	l.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.95))
+	l.add_theme_constant_override("outline_size", 5)
+	fx_layer.add_child(l)
+	l.size = Vector2(140.0 * u, 30.0 * u)
+	l.position = from_global - fx_layer.global_position - Vector2(l.size.x / 2.0, l.size.y / 2.0)
+	if Settings.reduce_motion:
+		get_tree().create_timer(0.8).timeout.connect(l.queue_free)
+		return
+	var tw := _tween()
+	tw.set_parallel(true)
+	var target := to_global - fx_layer.global_position - Vector2(l.size.x / 2.0, l.size.y / 2.0)
+	tw.tween_property(l, "position", target, Settings.dur(0.55) + 0.001).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.chain().tween_property(l, "modulate:a", 0.0, Settings.dur(0.2) + 0.001)
+	tw.chain().tween_callback(l.queue_free)
+
+
+
 func _clear_highlights() -> void:
 	for id in bar_views:
 		bar_views[id].highlight = false

@@ -608,6 +608,9 @@ func _draw_split(alloc: Dictionary) -> void:
 ## --- duel -------------------------------------------------------------
 
 func begin_duel(ev: Dictionary) -> void:
+	if not visible:
+		visible = true
+		_present(true)
 	_duel_ev = ev
 	_duel_token += 1
 	duel_phase = DuelPhase.INTRO
@@ -862,11 +865,11 @@ func finish_duel(ev: Dictionary) -> void:
 		return                                  # settlement is shown exactly once
 	var token := _duel_token
 	if duel_phase < DuelPhase.REVEAL:           # skipped / replayed fast: land the dice first
-		_die_a.land(int(ev["rollA"]))
-		_die_b.land(int(ev["rollB"]))
+		_die_a.land(int(ev.get("rollA", 0)))
+		_die_b.land(int(ev.get("rollB", 0)))
 	duel_phase = DuelPhase.SETTLEMENT
-	_sum_a.text = T.t("눈 %d + %d = %d") % [int(_duel_ev["symbolA"]), int(ev["rollA"]), int(ev["scoreA"])]
-	_sum_b.text = T.t("눈 %d + %d = %d") % [int(_duel_ev["symbolB"]), int(ev["rollB"]), int(ev["scoreB"])]
+	_sum_a.text = T.t("눈 %d + %d = %d") % [int(_duel_ev.get("symbolA", 0)), int(ev.get("rollA", 0)), int(ev.get("scoreA", 0))]
+	_sum_b.text = T.t("눈 %d + %d = %d") % [int(_duel_ev.get("symbolB", 0)), int(ev.get("rollB", 0)), int(ev.get("scoreB", 0))]
 	_die_a.glow = ev["winnerId"] == ev["playerA"]
 	_die_b.glow = ev["winnerId"] == ev["playerB"]
 	_die_a.dim = not _die_a.glow
