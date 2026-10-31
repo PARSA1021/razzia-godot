@@ -235,7 +235,7 @@ func _show_round_result(ev: Dictionary) -> void:
 			stages[2].append(ml)
 	var RelicManager = preload("res://engine/relic_manager.gd")
 	var is_relic: bool = RelicManager.is_relic_mode(state) and not bool(ev.get("finalRound", false))
-	var btn_txt := tr("최종 결과 ▸") if ev["finalRound"] else (tr("암시장 방문 ▸") if is_relic else tr("다음 라운드로 ▸"))
+	var btn_txt := tr("최종 결과 ▸") if bool(ev.get("finalRound", false)) else (tr("암시장 방문 ▸") if is_relic else tr("다음 라운드로 ▸"))
 	var btn := W.button(btn_txt, "primary", fz.call(22), Vector2((260.0 if is_relic else 220.0) * u, 52.0 * u))
 	btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	vb.add_child(btn)
