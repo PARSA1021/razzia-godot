@@ -17,7 +17,7 @@ T = {
 "튜토리얼은 저장되지 않습니다.": "The tutorial is not saved.",
 "슬롯 %d에 자동 저장 중 · 카드를 고를 때마다 저장됩니다.": "Autosaving to slot %d · saved every time you pick a card.",
 "QUICK START  ·  빠른 시작 (NEW GAME)": "QUICK START (NEW GAME)",
-"💡 처음이라면 튜토리얼을 추천해요 (3분)": "💡 If you're new, we recommend the tutorial (3 min)",
+"처음이라면 튜토리얼을 추천해요 (3분)": "If you're new, we recommend the tutorial (3 min)",
 "TUTORIAL  ·  튜토리얼 (Sal과 3라운드)": "TUTORIAL (3 rounds with Sal)",
 "CUSTOM GAME  ·  사용자 지정 게임": "CUSTOM GAME",
 "SETTINGS  ·  환경 설정": "SETTINGS",

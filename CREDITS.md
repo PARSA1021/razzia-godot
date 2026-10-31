@@ -17,15 +17,15 @@ The vector icons used in this game are sourced from [game-icons.net](https://gam
 - **Bank** (`bank.svg`): Used for **스위스 비밀계좌 (Swiss Account)** relic icon.
 - **Rolling Dices** (`rolling-dices.svg`): Used for **조작된 주사위 (Loaded Dice)** relic icon.
 - **Fleur-de-Lys** (`fleur-de-lys.svg`): Used for **신디케이트 문장 (Syndicate Crest)** relic icon.
-- **Briefcase** (`briefcase.svg`): Used for **기본 연줄 (Connections fallback)** icon.
+- **Contract** (`contract.svg`): Used for **기본 연줄 계약서 (Connections Contract fallback)** icon.
+- **Notebook** (`notebook.svg`): Used for **비밀 정보원 (The Informant)** relic icon.
+- **Dial Padlock** (`dial-padlock.svg`): Used for **결투 방어자 (Duel Defender)** safe/dial badge icon.
 - **Clockwise Rotation** (`clockwise-rotation.svg`): Used for **암시장 새로고침 (Black Market Reroll)** button icon.
-- **Revolver** (`revolver.svg`): Used for **결투 도전자 (Duel Challenger)** badge icon.
 - **Dice Six Faces Six** (`dice-six-faces-six.svg`): Used for **주사위 굴리기 (Roll Die)** action icon.
 
 #### Lorc (https://lorcblog.blogspot.com) — CC BY 3.0
-- **Fedora** (`fedora.svg`): Used for **비밀 정보원 (The Informant)** relic icon.
+- **Crossed Pistols** (`crossed-pistols.svg`): Used for **결투 도전자 (Duel Challenger)** revolver badge icon.
 - **Scales** (`scales.svg`): Used for **매수한 판사 (Bribed Judge)** relic icon.
-- **Bordered Shield** (`bordered-shield.svg`): Used for **결투 방어자 (Duel Defender)** badge icon.
 - **Padlock** (`padlock.svg`): Used for **잠금 (Locked/Protection)** status icon.
 
 #### Andy Meneely — CC BY 3.0

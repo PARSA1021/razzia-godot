@@ -111,7 +111,7 @@ T = {
 "내 잔액  %s (변동 없음)": "My money  %s (no change)",
 "%d라운드 · 최종 정산": "Round %d · final settlement",
 "게임 요약 보기": "Game summary",
-"★ 새 업적 달성!": "★ New achievement!",
+"새 업적 달성!": "New achievement!",
 "소리 켜짐": "Sound on",
 "소리 꺼짐 (%s)": "Sound off (%s)",
 "오류: %s": "Error: %s",
