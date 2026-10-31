@@ -38,6 +38,14 @@ var neg := {}                # NEGOTIATION_STARTED event
 var proposal := {}           # playerId -> amount (empty until PROPOSAL_MADE)
 var marks := {}              # playerId -> "ACCEPT" | "DUEL"
 
+var _row_faces := {}
+var _proposal_active := false
+var _proposal_adjust: Callable
+var _proposal_warn: Callable
+var _proposal_presets: Array = []
+var _proposal_preset_idx := 0
+var _proposal_apply_preset: Callable
+
 var _header: VBoxContainer
 var _rows: VBoxContainer
 var _split: Control
@@ -110,6 +118,39 @@ func _init() -> void:
 	_action_box = VBoxContainer.new()
 	_action_box.add_theme_constant_override("separation", 8)
 	vb.add_child(_action_box)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not visible:
+		return
+	if _proposal_active:
+		if event is InputEventJoypadButton and event.pressed:
+			match event.button_index:
+				JOY_BUTTON_LEFT_SHOULDER:
+					if _proposal_adjust.is_valid():
+						_proposal_adjust.call(-Eng.MONEY_STEP)
+						get_viewport().set_input_as_handled()
+				JOY_BUTTON_RIGHT_SHOULDER:
+					if _proposal_adjust.is_valid():
+						_proposal_adjust.call(Eng.MONEY_STEP)
+						get_viewport().set_input_as_handled()
+				JOY_BUTTON_DPAD_UP:
+					if not _proposal_presets.is_empty():
+						_proposal_preset_idx = (_proposal_preset_idx - 1 + _proposal_presets.size()) % _proposal_presets.size()
+						if _proposal_apply_preset.is_valid():
+							_proposal_apply_preset.call(_proposal_preset_idx)
+						get_viewport().set_input_as_handled()
+				JOY_BUTTON_DPAD_DOWN:
+					if not _proposal_presets.is_empty():
+						_proposal_preset_idx = (_proposal_preset_idx + 1) % _proposal_presets.size()
+						if _proposal_apply_preset.is_valid():
+							_proposal_apply_preset.call(_proposal_preset_idx)
+						get_viewport().set_input_as_handled()
+				JOY_BUTTON_B:
+					if _proposal_warn.is_valid():
+						_proposal_warn.call()
+						get_viewport().set_input_as_handled()
+
 
 
 ## The panel grows with its content (offer steppers, duel dice…). If it would not fit on a short screen
@@ -427,6 +468,7 @@ func _clear_split() -> void:
 
 func _render_rows() -> void:
 	_clear(_rows)
+	_row_faces.clear()
 	if neg.is_empty():
 		return
 	for pid in neg["claimantIds"]:
@@ -451,6 +493,7 @@ func _render_rows() -> void:
 			face.character = _nm(pid)
 			face.custom_minimum_size = Vector2(_fs(52), _fs(52))
 			fb.add_child(face)
+			_row_faces[pid] = face
 		else:
 			var me := PanelContainer.new()
 			me.custom_minimum_size = Vector2(_fs(46), _fs(46))
@@ -912,6 +955,8 @@ func _finish_close() -> void:
 	modulate.a = 1.0
 	_clear(_header)
 	_clear(_rows)
+	_row_faces.clear()
+	_proposal_active = false
 	_clear(_duel_box)
 	_clear(_action_box)
 	_clear_split()
@@ -1049,6 +1094,31 @@ func ask_response(view: Dictionary) -> String:
 	return str(v)
 
 
+## Calculates preset opponent share with proposer advantage:
+## - Round to nearest $5,000
+## - If exactly in the middle ($2,500 remainder), floor to lower $5,000 (proposer keeps the extra $2,500)
+## - If 25% < $5,000, minimum is $5,000 (if prize allows)
+static func calc_preset_opponent_share(prize: int, pct: float, n_others: int = 1) -> int:
+	if prize <= 0 or n_others <= 0:
+		return 0
+	var raw := (float(prize) * pct) / float(n_others)
+	var raw_i := int(round(raw))
+	var share := 0
+	var rem := raw_i % Eng.MONEY_STEP
+	if rem == 2500:
+		# Exact midpoint: proposer gets more -> opponent's share floored to lower $5,000
+		share = raw_i - 2500
+	else:
+		share = int(round(raw / float(Eng.MONEY_STEP))) * Eng.MONEY_STEP
+	# Minimum $5,000 rule: if 25% is under $5,000 (or if share < $5,000), minimum is $5,000
+	if share < Eng.MONEY_STEP and prize >= Eng.MONEY_STEP * (n_others + 1):
+		share = Eng.MONEY_STEP
+	# Clamp so total others share leaves at least min share or remaining for proposer
+	var max_share := maxi(0, (prize - Eng.MONEY_STEP) / n_others) if prize >= Eng.MONEY_STEP * (n_others + 1) else (prize / n_others)
+	share = clampi(share, 0, max_share)
+	return share
+
+
 func ask_proposal(view: Dictionary) -> Dictionary:
 	var n: Dictionary = view["negotiation"]
 	var me: String = view["you"]
@@ -1063,10 +1133,19 @@ func ask_proposal(view: Dictionary) -> Dictionary:
 		alloc[o] = int(suggestion[o])
 	_clear(_action_box)
 	set_stage(0)
-	set_status("내가 먼저 제안합니다. 상대가 거절(결투)하지 않을 만큼 주되, 내 몫은 최대한 지키세요.")
+	set_status(tr("내가 먼저 제안합니다. 상대가 거절(결투)하지 않을 만큼 주되, 내 몫은 최대한 지키세요."))
+
+	# Fixed session noise per negotiation modal (calculated once, never re-rolled on slider moves)
+	var session_noise := {}
+	var s_seed := int(n.get("prize", 0)) * 73 + int(n.get("barId", "").hash()) + int(n.get("seq", 0)) * 19
+	for o in others:
+		var h := absi((s_seed * 31 + int(n["symbols"].get(o, 0)) * 13 + int(n["symbols"].get(me, 0)) * 3) % 1000)
+		session_noise[o] = (float(h) / 1000.0 - 0.5) * 0.30
+
 	var my_label := W.label("", _fs(26), T.GOLD, "money", HORIZONTAL_ALIGNMENT_CENTER, 800)
 	var warn := W.label("", _fs(13), T.DANGER, "ui", HORIZONTAL_ALIGNMENT_CENTER, 700)
 	var amount_labels := {}
+	var reaction_labels := {}
 	var hints := {}
 	var sliders := {}
 	var step_small := Eng.MONEY_STEP
@@ -1085,12 +1164,47 @@ func ask_proposal(view: Dictionary) -> Dictionary:
 			var a: int = int(alloc[o])
 			amount_labels[o].text = T.money(a)
 			preview[o] = a
-			# what o can expect from calling a duel against me (they would win both shares)
+			var p_o := Eng.duel_win_probability(int(n["symbols"][o]), int(n["symbols"][me]), true)
+			var base_ev := p_o * float(prize)
+			var perceived_ev := base_ev * (1.0 + float(session_noise.get(o, 0.0)))
+			var ratio := float(a) / maxf(1.0, perceived_ev)
+
+			var rx_line := ""
+			var rx_col: Color = T.TEXT_DIM
+			var face_rot := 0.0
+			var face_mod := Color.WHITE
+
+			if ratio < 0.75:
+				rx_col = T.DANGER
+				face_rot = -3.5
+				face_mod = Color(1.0, 0.78, 0.78)
+				var lines := [tr("장난하나? 결투를 원하는 건가?"), tr("이딴 푼돈으로 날 매수하겠다고?"), tr("장부를 덮고 결투로 가지.")]
+				rx_line = lines[absi(s_seed + int(n["symbols"][o])) % lines.size()]
+			elif ratio < 1.10:
+				rx_col = Color("e0b468")
+				face_rot = 0.0
+				face_mod = Color.WHITE
+				var lines := [tr("흠... 고민되는 제안이군."), tr("장부를 좀 더 꼼꼼히 봐야겠어."), tr("만족스럽진 않지만... 생각해보지.")]
+				rx_line = lines[absi(s_seed + int(n["symbols"][o])) % lines.size()]
+			else:
+				rx_col = T.OK
+				face_rot = 2.0
+				face_mod = Color(1.06, 1.06, 1.0)
+				var lines := [tr("합리적인 제안이군."), tr("이 정도면 서로 웃으며 악수할 수 있지."), tr("신사적인 거래야.")]
+				rx_line = lines[absi(s_seed + int(n["symbols"][o])) % lines.size()]
+
+			if _row_faces.has(o) and is_instance_valid(_row_faces[o]):
+				_row_faces[o].rotation_degrees = face_rot
+				_row_faces[o].modulate = face_mod
+
+			if reaction_labels.has(o) and is_instance_valid(reaction_labels[o]):
+				reaction_labels[o].text = "\"%s\"" % rx_line
+				reaction_labels[o].add_theme_color_override("font_color", rx_col)
+
 			if Settings.beginner_hints:
-				var p_o := Eng.duel_win_probability(int(n["symbols"][o]), int(n["symbols"][me]), true)
-				var ev := p_o * float(a + mine)
-				var likely := float(a) >= ev
-				hints[o].text = T.t("결투하면 상대 기대값 약 %s (승률 %d%%) → %s") % [T.money(int(round(ev / float(Eng.MONEY_STEP))) * Eng.MONEY_STEP), int(round(p_o * 100.0)), T.t("수락할 가능성 높음" if likely else "결투를 걸 수 있음")]
+				var ev_disp := int(round(base_ev / float(Eng.MONEY_STEP))) * Eng.MONEY_STEP
+				var likely := float(a) >= base_ev
+				hints[o].text = T.t("결투 기대값 약 %s (승률 %d%%) → %s") % [T.money(ev_disp), int(round(p_o * 100.0)), T.t("수락 가능성 높음" if likely else "결투 위험 있음")]
 				hints[o].add_theme_color_override("font_color", T.OK if likely else T.DANGER)
 			else:
 				hints[o].text = ""
@@ -1145,46 +1259,88 @@ func ask_proposal(view: Dictionary) -> Dictionary:
 				set_amt.call(o, int(v)))
 		sliders[o] = sl
 		box.add_child(sl)
+		var rx_lbl := W.label("", _fs(13), T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_CENTER, 700)
+		reaction_labels[o] = rx_lbl
+		box.add_child(rx_lbl)
 		hints[o] = W.label("", _fs(12), T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_CENTER, 700)
 		box.add_child(hints[o])
 		_action_box.add_child(box)
 	_action_box.add_child(my_label)
 	_action_box.add_child(warn)
+
 	var presets := HBoxContainer.new()
 	presets.alignment = BoxContainer.ALIGNMENT_CENTER
 	presets.add_theme_constant_override("separation", _fs(8))
 	_action_box.add_child(presets)
-	var sugg_btn := W.button("추천", "secondary", _fs(15), Vector2(_fs(90), _fs(44)))
-	var even_btn := W.button("균등 분배", "secondary", _fs(15), Vector2(_fs(110), _fs(44)))
-	var greedy_btn := W.button("내가 많이", "secondary", _fs(15), Vector2(_fs(110), _fs(44)))
+
+	var hard_btn := W.button(tr("강경한 요구 (25%)"), "secondary", _fs(14), Vector2(_fs(144), _fs(44)))
+	var half_btn := W.button(tr("절반씩 (50%)"), "secondary", _fs(14), Vector2(_fs(120), _fs(44)))
+	var gen_btn := W.button(tr("관대한 양보 (75%)"), "secondary", _fs(14), Vector2(_fs(144), _fs(44)))
+	var sugg_btn := W.button(tr("추천"), "secondary", _fs(14), Vector2(_fs(90), _fs(44)))
+
 	if Settings.beginner_hints:
 		presets.add_child(sugg_btn)
-	presets.add_child(even_btn)
-	presets.add_child(greedy_btn)
+	presets.add_child(hard_btn)
+	presets.add_child(half_btn)
+	presets.add_child(gen_btn)
+
 	var ok_btn := W.button(tr("제안 전달"), "primary", _fs(20), Vector2(_fs(300), _fs(52)))
 	ok_btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	_action_box.add_child(ok_btn)
+
+	var pad_hint := W.label(T.t("[D-패드] 프리셋 선택   [L1/R1] ±$5,000   [A] 확정   [B 취소 불가]"), _fs(12), T.TEXT_DIM, "ui", HORIZONTAL_ALIGNMENT_CENTER, 700)
+	_action_box.add_child(pad_hint)
+
 	var apply := func(vals: Dictionary) -> void:
 		for o in others:
 			alloc[o] = int(vals[o])
 		refresh.call()
+
 	sugg_btn.pressed.connect(func(): apply.call(suggestion))
-	even_btn.pressed.connect(func():
-		var share := int(floor(float(prize) / float(others.size() + 1) / float(Eng.MONEY_STEP))) * Eng.MONEY_STEP
+	hard_btn.pressed.connect(func():
+		var share := calc_preset_opponent_share(prize, 0.25, others.size())
 		var d := {}
 		for o in others:
 			d[o] = share
 		apply.call(d))
-	greedy_btn.pressed.connect(func():
-		var share := int(floor(float(prize) * 0.2 / float(others.size()) / float(Eng.MONEY_STEP))) * Eng.MONEY_STEP
+	half_btn.pressed.connect(func():
+		var share := calc_preset_opponent_share(prize, 0.50, others.size())
 		var d := {}
 		for o in others:
 			d[o] = share
 		apply.call(d))
+	gen_btn.pressed.connect(func():
+		var share := calc_preset_opponent_share(prize, 0.75, others.size())
+		var d := {}
+		for o in others:
+			d[o] = share
+		apply.call(d))
+
+	var preset_btns: Array = []
+	if Settings.beginner_hints:
+		preset_btns.append(sugg_btn)
+	preset_btns.append_array([hard_btn, half_btn, gen_btn])
+	_proposal_presets = preset_btns
+	_proposal_preset_idx = 0
+	_proposal_apply_preset = func(idx: int):
+		if idx >= 0 and idx < _proposal_presets.size():
+			var b: Button = _proposal_presets[idx]
+			b.grab_focus()
+			b.emit_signal("pressed")
+	_proposal_adjust = func(delta: int):
+		if not others.is_empty():
+			Audio.play("tick")
+			set_amt.call(others[0], int(alloc[others[0]]) + delta)
+	_proposal_warn = func():
+		Audio.play("disabled")
+		warn.text = tr("취소할 수 없습니다. 제안을 전달해야 다음으로 진행됩니다.")
+	_proposal_active = true
+
 	ok_btn.pressed.connect(func():
 		if ok_btn.disabled:
 			return
 		ok_btn.disabled = true
+		_proposal_active = false
 		Audio.play("confirm")
 		var out := {}
 		var total := 0
@@ -1197,6 +1353,7 @@ func ask_proposal(view: Dictionary) -> Dictionary:
 	W.arm_focus(ok_btn, 0.5)
 	reset_size()
 	var res = await decided
+	_proposal_active = false
 	_clear(_action_box)
 	_clear_split()
 	return res

@@ -75,6 +75,7 @@ func _run() -> void:
 	Settings.music_on = false
 	Settings.sfx_on = false
 	Settings.reduce_motion = false
+	Settings.beginner_hints = true
 	root.size = Vector2i(1280, 720)
 	host = Control.new()
 	host.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
