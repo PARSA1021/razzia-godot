@@ -1,17 +1,18 @@
-# 🍸 RAZZIA — The 1927 Chicago Underground
+# 🍸 ZOCARI: Take It or Leave It
 
 <p align="center">
-  <strong>1927년 시카고, 금주법 시대의 밤거리를 지배하라.</strong><br>
-  1992년 Stefan Dorra의 전설적인 보드게임 <em>Razzia</em>를 완벽하게 디지털로 계승한 동시 카드 선택 심리 베팅 게임
+  <strong>"받든지 말든지." — 1927년 시카고, 금주법 시대의 밤거리를 지배하라.</strong><br>
+  1992년 Stefan Dorra의 전설적인 보드게임 메커니즘을 독창적인 글로벌 독립 브랜드로 계승한 동시 카드 선택 심리 베팅 게임
 </p>
 
 <p align="center">
+  <img src="https://img.shields.io/badge/Brand-Zocari%3A%20Take%20It%20or%20Leave%20It-ffd700?logo=steam&logoColor=black" alt="Zocari: Take It or Leave It">
   <img src="https://img.shields.io/badge/Engine-Godot%204.3%20Stable-478cbf?logo=godotengine&logoColor=white" alt="Godot Engine">
   <img src="https://img.shields.io/badge/Language-GDScript%202.0-blue" alt="GDScript">
   <img src="https://img.shields.io/badge/Renderer-OpenGL%20Compatibility-green" alt="OpenGL Compatibility">
   <img src="https://img.shields.io/badge/Tests-109%20Checks%20PASS-brightgreen" alt="109 Checks Pass">
   <img src="https://img.shields.io/badge/Platform-PC%20%7C%20Steam%20Deck%20%7C%20Mobile-orange" alt="Platforms">
-  <img src="https://img.shields.io/badge/Steam%20Status-Release%20Audit%20Complete-purple" alt="Steam Release Audit">
+  <img src="https://img.shields.io/badge/Steam%20Status-Brand%20Clearance%20Complete-purple" alt="Brand Clearance Complete">
 </p>
 
 ---
@@ -32,8 +33,8 @@
 ## 1. 게임 소개 (Introduction)
 
 ### 1.1 기본 정보
-- **공식 명칭:** RAZZIA (부제: The 1927 Chicago Underground) — *Steam 출시 시 독자 브랜드 리브랜딩 예정*
-- **원작 영감:** 1992년 Stefan Dorra 설계, Ravensburger 출판의 고전 보드게임 *Razzia*의 동시 선택 심리 베팅 메커니즘
+- **공식 명칭:** Zocari: Take It or Leave It (단축 브랜드: **Zocari**, 한글명: **조카리**)
+- **원작 영감:** 1992년 Stefan Dorra 설계, Ravensburger 출판의 고전 보드게임 *Razzia*의 동시 선택 심리 베팅 메커니즘 오마주 (글로벌 상표권 및 IP 100% 클리어런스 완료)
 - **장르:** 동시 선택 심리 베팅 보드게임 (Simultaneous Card Action) / 로그라이크 카드 전략
 - **플레이어 수:** 3인 ~ 8인 지원 (1인 플레이어 vs 2~7인 AI 라이벌)
 - **플레이 타임:** 매치당 약 10분 ~ 15분

@@ -13,7 +13,7 @@ const HISTORY_MAX := 20
 ## id -> [title, description, kind]; kind "game" = decided by one finished game, "total" = by the totals over all games
 const ACHIEVEMENTS := {
 	"first_win": ["첫 승리", "게임에서 처음으로 우승", "game"],
-	"first_razzia": ["경찰을 불러라", "한 판에서 RAZZIA를 한 번 발동", "game"],
+	"first_razzia": ["경찰을 불러라", "한 판에서 경찰 단속(RAID)을 한 번 발동", "game"],
 	"duel_3": ["결투의 맛", "한 판에서 결투 3승", "game"],
 	"duel_flawless": ["무패의 결투사", "결투를 2번 이상 하고 모두 승리", "game"],
 	"solo_5": ["독점 사업", "한 판에서 혼자 차지한 술집 5곳 이상", "game"],

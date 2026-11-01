@@ -204,17 +204,22 @@ func _build_left() -> Control:
 	
 	# Header & Logo Section
 	var logo_box := VBoxContainer.new()
-	logo_box.add_theme_constant_override("separation", 3)
+	logo_box.add_theme_constant_override("separation", 2)
 	
-	var t := W.label("RAZZIA", title_size, T.GOLD, "title", HORIZONTAL_ALIGNMENT_CENTER, 800)
+	var t := W.label("ZOCARI", title_size, T.GOLD, "title", HORIZONTAL_ALIGNMENT_CENTER, 800)
 	t.add_theme_color_override("font_outline_color", Color("140b04"))
 	t.add_theme_constant_override("outline_size", 14)
 	t.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.85))
 	t.add_theme_constant_override("shadow_offset_y", 6)
 	logo_box.add_child(t)
 	
+	var tag := W.label("TAKE IT OR LEAVE IT", 16, T.GOLD_DIM, "title", HORIZONTAL_ALIGNMENT_CENTER, 800)
+	tag.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.7))
+	tag.add_theme_constant_override("shadow_offset_y", 2)
+	logo_box.add_child(tag)
+	
 	var orn := Ornament.new()
-	orn.custom_minimum_size = Vector2(0, 16)
+	orn.custom_minimum_size = Vector2(0, 14)
 	logo_box.add_child(orn)
 	
 	logo_box.add_child(W.label(T.t("시카고 루프의 마지막 한 판"), 16, T.BRASS, "title", HORIZONTAL_ALIGNMENT_CENTER, 700))

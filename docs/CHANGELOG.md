@@ -3,9 +3,19 @@
 > **상위 포털:** [`docs/README.md`](README.md)  
 > **상세 개발 이력 (Phases 1 ~ 29+):** [`docs/development/CHANGELOG.md`](development/CHANGELOG.md)
 
+## [Phase 31: Official Rebranding — Zocari: Take It or Leave It] — 2026-11-01
+- **독립 브랜드 공식 확정:** 글로벌 상표권 분쟁 원천 차단을 위해 `Zocari: Take It or Leave It` (단축 브랜드: `Zocari`, 한글명: `조카리: 테이크 잇 오어 리브 잇`) 확정.
+- **상표 및 IP 실사 완료:** KIPRIS, USPTO, EUIPO, WIPO, TMview, Steam 플랫폼 교차 전수 조사 완료 (`docs/BRAND_NAMING_AND_IP_CLEARANCE.md`).
+- **엔진/프로젝트 설정 적용:**
+  - `project.godot`: `config/name="Zocari: Take It or Leave It"` 적용.
+  - `ui/menu_screen.gd`: 메인 메뉴 타이틀 `ZOCARI` 및 서브타이틀 `TAKE IT OR LEAVE IT` 골드 라벨 탑재.
+  - `ui/card_view.gd`: 경찰 카드 표기 `RAID` 스탬프로 갱신 (엔진 내부 식별자 및 109종 골든 테스트 100% 호환 보존).
+  - `ui/records.gd`: 도전과제 설명문 내 단속 표기 최신화.
+- **문서 체계 동기화:** 루트 `README.md`, `docs/README.md`, 브랜드 실사 보고서 전면 갱신.
+
 ---
 
-## [Phase 30: Steam Release Preparation Audit] — 2026-11-01 (Current)
+## [Phase 30: Steam Release Preparation Audit] — 2026-11-01
 - **Steam 출시 종합 감사 완료:** Technical Director, Game Director, QA Lead, Steam Specialist 관점에서 프로젝트 전수 조사.
 - **감사 및 출시 전략 문서 구축:**
   - `docs/STEAM_RELEASE_AUDIT.md`: 스팀 출시 종합 감사 보고서.

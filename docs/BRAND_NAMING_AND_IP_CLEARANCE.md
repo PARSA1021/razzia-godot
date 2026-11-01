@@ -5,7 +5,7 @@
 > **조사 기준일:** 2026-11-01  
 > **검토 주관:** Technical Director, IP Legal Risk Analyst & Brand Strategist  
 > **조사 대상:** *Razzia Mobile* 글로벌 Steam 출시를 위한 신규 독립 브랜드 네이밍  
-> **상태:** 예비 실사 완료 (Preliminary Clearance Completed) — 전문 변리사 법률 자문 대기  
+> **상태:** ✅ **공식 브랜드 확정 완료 — `Zocari: Take It or Leave It` (조카리: 테이크 잇 오어 리브 잇)**  
 
 ---
 
@@ -324,9 +324,11 @@
   2. **클린한 상표/도메인 상태:** Steam 내 동명 타이틀 0건, USPTO/EUIPO 제9류 비디오게임 상표 선점 미발견.
   3. **완벽한 발음과 어감:** 한국어, 영어, 일본어, 유럽권 모든 언어에서 3음절로 발음하기 극도로 편함.
   4. **아르데코 비주얼 로고 적합성:** 알파벳 `Z`의 날카로운 대각선 구조가 1920년대 아르데코 지오메트릭 골드 로고 디자인에 완벽히 부합함.
-  5. **IP 확장성:**
-     - 본편: *Zocari: Chicago 1927* (또는 *Zocari: The Underground Bet*)
-     - 후속작: *Zocari II: London Fog*, *Zocari: High Stakes*
+  5. **공식 확정 타이틀:**
+     - **공식 출시명:** **`Zocari: Take It or Leave It`** (조카리: 테이크 잇 오어 리브 잇)
+     - **단축 브랜드:** **`Zocari`** (조카리)
+     - **선정 배경:** 협상 제안자가 상대방에게 던지는 게임의 핵심 대사("받든지 말든지")이자, 거절 시 주사위 결투로 이어지는 코어 루프를 완벽히 관통하는 최고 펀치라인. Steam 내 동명 게임 0건 확인 완료.
+     - **후속작 확장:** *Zocari II: London Fog*, *Zocari: High Stakes*
 
 ---
 

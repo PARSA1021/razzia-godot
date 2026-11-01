@@ -1,8 +1,9 @@
 # Credits & Licenses (크레딧 및 라이선스)
 
 ## Game Design & Original Concept
-- **RAZZIA (1992)**: Original board game design by **Stefan Dorra** (Ravensburger).
-- **Digital Adaptation**: Prohibition Chicago 1920s Noir edition.
+- **Zocari: Take It or Leave It**: Independent global video game adaptation, rogue-lite expansion, and original noir lore.
+- **Mechanics Tribute**: Inspired by the classic simultaneous card-selection and bluffing mechanics of *Razzia* (1992), designed by **Stefan Dorra** (Ravensburger).
+
 
 ---
 

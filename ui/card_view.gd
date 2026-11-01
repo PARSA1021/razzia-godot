@@ -249,7 +249,7 @@ func _draw_face(w: float, h: float) -> void:
 		else:
 			_draw_police_star(Vector2(ix + isz * 0.5, iy + isz * 0.5), 6.5 * k, Color("ffd770"))
 		var sf := T.font("stamp")
-		var s_text := "RAZZIA"
+		var s_text := "RAID"
 		var s_sz := int(round(12.0 * k))
 		while s_sz > int(round(8.5 * k)) and sf.get_string_size(s_text, HORIZONTAL_ALIGNMENT_LEFT, -1, s_sz).x > avail_w:
 			s_sz -= 1
