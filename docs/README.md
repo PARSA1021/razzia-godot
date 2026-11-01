@@ -18,6 +18,7 @@ Steam 출시 검토(TD, Game Director, QA Lead, Steam Specialist)를 위해 신�
 | 🎲 **게임 디자인 & AI 평가서** | [`docs/GAME_DESIGN_REVIEW.md`](GAME_DESIGN_REVIEW.md) | 블러핑/협상/결투 심리전 분석, AI 기댓값 알고리즘, 유물 모드 상업성 검토 |
 | 🧪 **QA 종합 테스트 계획서** | [`docs/QA_TEST_PLAN.md`](QA_TEST_PLAN.md) | 109종 골든 테스트(PASS), 6,442개 세이브 체크(PASS), 발견된 3대 결함 진단 |
 | ⚖️ **법률 및 에셋 라이선스 실사** | [`docs/LEGAL_AND_ASSET_AUDIT.md`](LEGAL_AND_ASSET_AUDIT.md) | 상표권 분쟁 회피 독자 리브랜딩 권고, 폰트/아이콘/오디오 라이선스 실사 |
+| 🏷️ **글로벌 상표권 및 IP 사전 실사** | [`docs/BRAND_NAMING_AND_IP_CLEARANCE.md`](BRAND_NAMING_AND_IP_CLEARANCE.md) | 35대 조어형 브랜드 후보, KIPRIS/USPTO/EUIPO 검색, 4단계 법적 위험 분류 |
 | 🗺️ **5단계 상용화 로드맵** | [`docs/STEAM_RELEASE_ROADMAP.md`](STEAM_RELEASE_ROADMAP.md) | Phase 1~5 마일스톤, P0/P1 작업 명세표, 상점 캡슐 에셋 준비 계획 |
 | 📜 **마스터 체인지로그** | [`docs/CHANGELOG.md`](CHANGELOG.md) | Phase 1 ~ 30 누적 개발 및 릴리즈 노트 |
 
@@ -36,6 +37,7 @@ docs/
 ├── GAME_DESIGN_REVIEW.md          # [신규] 게임 디렉터 관점의 기획/재미/완성도 평가
 ├── QA_TEST_PLAN.md                # [신규] 품질 보증(QA) 및 종합 테스트 계획서
 ├── LEGAL_AND_ASSET_AUDIT.md       # [신규] 지식재산권, 상표권 및 에셋 라이선스 실사
+├── BRAND_NAMING_AND_IP_CLEARANCE.md # [신규] 글로벌 상표권 실사 및 35대 신규 브랜드 후보
 ├── STEAM_RELEASE_ROADMAP.md       # [신규] 5단계 개발 우선순위 및 상용화 로드맵
 ├── CHANGELOG.md                   # [신규] 프로젝트 마스터 변경 이력
 │

@@ -202,6 +202,7 @@ razzia-godot/
 - 🎲 [게임 기획, 재미 및 AI 품질 평가](docs/GAME_DESIGN_REVIEW.md) — `docs/GAME_DESIGN_REVIEW.md`
 - 🧪 [QA 종합 테스트 계획 및 결함 진단](docs/QA_TEST_PLAN.md) — `docs/QA_TEST_PLAN.md`
 - ⚖️ [지식재산권, 상표권 및 에셋 라이선스 실사](docs/LEGAL_AND_ASSET_AUDIT.md) — `docs/LEGAL_AND_ASSET_AUDIT.md`
+- 🏷️ [글로벌 상표권 실사 및 35대 신규 브랜드 후보](docs/BRAND_NAMING_AND_IP_CLEARANCE.md) — `docs/BRAND_NAMING_AND_IP_CLEARANCE.md`
 - 🗺️ [5단계 개발 우선순위 및 상용화 로드맵](docs/STEAM_RELEASE_ROADMAP.md) — `docs/STEAM_RELEASE_ROADMAP.md`
 - 📜 [프로젝트 마스터 체인지로그](docs/CHANGELOG.md) — `docs/CHANGELOG.md`
 
