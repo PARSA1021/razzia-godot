@@ -248,7 +248,7 @@ func _draw_face(w: float, h: float) -> void:
 			draw_texture_rect(p_icon, Rect2(ix, iy, isz, isz), false, Color("ffd770"))
 		else:
 			_draw_police_star(Vector2(ix + isz * 0.5, iy + isz * 0.5), 6.5 * k, Color("ffd770"))
-		var sf := T.font("raid")
+		var sf := T.font("stamp")
 		var s_text := "RAID"
 		var s_sz := int(round(12.0 * k))
 		while s_sz > int(round(8.5 * k)) and sf.get_string_size(s_text, HORIZONTAL_ALIGNMENT_LEFT, -1, s_sz).x > avail_w:
@@ -260,7 +260,7 @@ func _draw_face(w: float, h: float) -> void:
 		var v_icon: Texture2D = T.venue_icon(str(card.get("barId", "")))
 		if v_icon != null:
 			draw_texture_rect(v_icon, Rect2(ix, iy, isz, isz), false, Color(col.lightened(0.4), 0.95))
-		var tf := T.venue_font(str(card.get("barId", "")))
+		var tf := T.font("title", 700)
 		var v_name: String = str(T.BAR_SHORT.get(str(card.get("barId", "")), str(card.get("barId", ""))))
 		var v_sz := int(round(11.5 * k))
 		while v_sz > int(round(8.0 * k)) and tf.get_string_size(v_name, HORIZONTAL_ALIGNMENT_LEFT, -1, v_sz).x > avail_w:

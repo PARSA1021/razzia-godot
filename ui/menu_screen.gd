@@ -213,7 +213,7 @@ func _build_left() -> Control:
 	t.add_theme_constant_override("shadow_offset_y", 6)
 	logo_box.add_child(t)
 	
-	var tag := W.label("TAKE IT OR LEAVE IT", 16, T.GOLD_DIM, "title_deco", HORIZONTAL_ALIGNMENT_CENTER, 800)
+	var tag := W.label("TAKE IT OR LEAVE IT", 16, T.GOLD_DIM, "title", HORIZONTAL_ALIGNMENT_CENTER, 800)
 	tag.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.7))
 	tag.add_theme_constant_override("shadow_offset_y", 2)
 	logo_box.add_child(tag)
