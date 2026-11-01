@@ -152,17 +152,22 @@ static func _load_font_file(path: String) -> FontFile:
 	return null
 
 
-## kind: "title" (Josefin Sans) | "money" (Playfair Display / Abril Fatface) | "stamp" (Special Elite) | "ui" (Pretendard) | "dialogue" (Lora + Hahmlet)
+## kind: "title" (Penshurst Swash) | "title_deco" (Josefin Sans) | "money" (Playfair Display) | "big_money" (Vast Shadow 3D) | "stamp"/"raid" (UnifrakturMaguntia Blackletter) | "western" (Sancreek) | "script" (Satisfy) | "ui" (Pretendard) | "dialogue" (Lora + Hahmlet)
 static func font(kind: String, weight: int = 600) -> Font:
 	var key := "%s-%d" % [kind, weight]
 	if _fonts.has(key):
 		return _fonts[key]
 	var pret_path := "res://assets/fonts/Pretendard-SemiBold.ttf" if weight >= 600 else "res://assets/fonts/Pretendard-Regular.ttf"
 	var paths := {
-		"title": "res://assets/fonts/JosefinSans.ttf",
+		"title": "res://assets/fonts/Penshurst-Bold.ttf",
+		"title_shadow": "res://assets/fonts/Penshurst-Shadow.ttf",
+		"title_deco": "res://assets/fonts/JosefinSans.ttf",
 		"money": "res://assets/fonts/PlayfairDisplay.ttf",
-		"big_money": "res://assets/fonts/AbrilFatface.ttf",
-		"stamp": "res://assets/fonts/SpecialElite.ttf",
+		"big_money": "res://assets/fonts/VastShadow.ttf",
+		"stamp": "res://assets/fonts/UnifrakturMaguntia.ttf",
+		"raid": "res://assets/fonts/UnifrakturMaguntia.ttf",
+		"western": "res://assets/fonts/Sancreek.ttf",
+		"script": "res://assets/fonts/Satisfy.ttf",
 		"ui": pret_path,
 		"dialogue": "res://assets/fonts/Lora.ttf",
 		"story": "res://assets/fonts/Lora.ttf",
@@ -176,8 +181,7 @@ static func font(kind: String, weight: int = 600) -> Font:
 		fv.base_font = base
 		if kind in ["money", "big_money"]:
 			fv.opentype_features = {"tnum": 1}
-		if kind == "title":
-			fv.variation_opentype = {_tag("wght"): 700}
+		if kind in ["title", "title_shadow", "western", "script"]:
 			var hahmlet := _load_font_file("res://assets/fonts/Hahmlet-Subset.ttf")
 			var kr := _load_font_file(pret_path)
 			var fbs: Array[Font] = []
@@ -202,6 +206,16 @@ static func font(kind: String, weight: int = 600) -> Font:
 		f = fv
 	_fonts[key] = f
 	return f
+
+
+static func venue_font(bar_id: String) -> Font:
+	match bar_id:
+		"HAVANA_BAR", "JAZZ_HOUSE":
+			return font("script")
+		"COLIBRI", "THE_JUNGLE":
+			return font("western")
+		_:
+			return font("title")
 
 
 static func _tag(name: String) -> int:

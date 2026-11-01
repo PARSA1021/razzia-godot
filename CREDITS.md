@@ -38,6 +38,11 @@ The vector icons used in this game are sourced from [game-icons.net](https://gam
 ---
 
 ## Fonts (서체 라이선스)
+- **Penshurst**: Designed by Paul Lloyd, vintage Victorian swash serif font (Freeware for commercial games).
+- **UnifrakturMaguntia**: Designed by J. 'Mach' Wust, licensed under the SIL Open Font License (OFL 1.1).
+- **Vast Shadow**: Designed by Nicole Fally, licensed under the SIL Open Font License (OFL 1.1).
+- **Sancreek & Rye**: Designed by Vernon Adams & Nicole Fally, licensed under the SIL Open Font License (OFL 1.1).
+- **Satisfy**: Designed by Sideshow, licensed under the SIL Open Font License (OFL 1.1).
 - **Josefin Sans**: Designed by Santiago Orozco, licensed under the SIL Open Font License (OFL 1.1).
 - **Abril Fatface**: Designed by TypeTogether (Veronika Burian, José Scaglione), licensed under the SIL Open Font License (OFL 1.1).
 - **Pretendard**: Designed by orioncactus (Kil Hyung-jin), licensed under the SIL Open Font License (OFL 1.1).
