@@ -1,8 +1,10 @@
 # Razzia Mobile — Game Overview
 
-> Project purpose: Build a mobile digital adaptation/prototype of the 1992 Ravensburger game **Razzia**, designed by Stefan Dorra.
+> Project purpose: Build a mobile & PC/Steam Deck digital adaptation of the 1992 Ravensburger game **Razzia**, designed by Stefan Dorra.
 >
-> This document defines the project-level goals. Detailed rules live in `02_RULEBOOK.md`; implementation flow lives in `03_GAME_FLOW.md`.
+> 🚀 **Steam 출시 마스터 문서 안내:** 최신 상용화 출시 감사 및 로드맵은 [`docs/STEAM_RELEASE_AUDIT.md`](STEAM_RELEASE_AUDIT.md) 및 [`README.md`](../README.md)를 참고하세요.
+> Detailed rules live in `02_RULEBOOK.md`; implementation flow lives in `03_GAME_FLOW.md`.
+
 
 ## 1. Project Identity
 

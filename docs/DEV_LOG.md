@@ -508,3 +508,23 @@ godot --headless --path . --script res://tests/save_resume_test.gd -- norecord=1
 - **게임패드 버그 수정(폰 세로에서 가끔 재현):**
   - 증상: 협상 응답 카드가 0.5초 동안 입력을 막는(arm) 사이에 십자키를 누르면 포커스가 ⎋ 버튼으로 갔고, 거기서 협상 카드로 돌아올 길이 없었음. 430×932에서 4판 중 3판 재현.
   - 수정: 협상 패널이 열려 있는데 포커스가 패널 밖에 있으면, 십자키나 A가 패널의 기본 버튼으로 포커스를 되돌림(`nego.default_focus_target()`). 수정 후 6판 연속 통과.
+
+### Phase 30: Steam 상용화 출시 감사 및 마스터 문서 체계 구축
+- **출시 준비 실사 (Conditional Go 판정):**
+  - TD / Game Director / QA Lead / Steam 출시 담당 관점에서 프로젝트 전수 조사.
+  - 109종 엔진 골든 테스트(PASS), 240개 중단점 6,442개 세이브 체크(PASS), Steam Deck 1280×800 네이티브 호환 확인.
+  - P0 긴급 수정 과제 3건(i18n 누락 4문장, QA 라운드 전환 버튼 매칭, tools 경로 검사기) 도출.
+- **Steam 상용화 9대 마스터 문서 신규 수립:**
+  - `docs/STEAM_RELEASE_AUDIT.md`: 스팀 출시 종합 감사 및 조건부 출시 판정서.
+  - `docs/TECHNICAL_ARCHITECTURE.md`: 5계층 단방향 아키텍처 및 4대 불변식 명세.
+  - `docs/STEAM_INTEGRATION.md`: GodotSteam GDExtension, 13종 업적, AutoCloud 세이브 전략.
+  - `docs/STEAM_DECK_COMPATIBILITY.md`: Steam Deck Verified 4대 기준 및 절전 프로파일 가이드.
+  - `docs/GAME_DESIGN_REVIEW.md`: 코어 루프, 7인 AI 라이벌, 8종 유물 상업성 평가.
+  - `docs/QA_TEST_PLAN.md`: 품질 보증 및 테스트 자동화 진단 보고서.
+  - `docs/LEGAL_AND_ASSET_AUDIT.md`: 독자 브랜드 리브랜딩 권고 및 에셋 라이선스 실사.
+  - `docs/STEAM_RELEASE_ROADMAP.md`: Phase 1~5 마일스톤 및 P0/P1 작업 명세표.
+  - `docs/CHANGELOG.md`: Phase 1~30 마스터 체인지로그 통합.
+- **문서 포털 및 README 동기화:**
+  - 루트 `README.md` 및 `docs/README.md` 전면 개편.
+  - `docs/development/DEVELOPMENT_STATUS.md`, `ROADMAP.md`, `KNOWN_ISSUES.md` 최신 동기화 완료.
+
