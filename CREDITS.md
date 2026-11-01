@@ -38,9 +38,12 @@ The vector icons used in this game are sourced from [game-icons.net](https://gam
 ---
 
 ## Fonts (서체 라이선스)
-- **Stint Ultra Expanded**: Designed by Brian J. Bonislawsky (Astigmatic), licensed under the SIL Open Font License (OFL 1.1).
+- **Josefin Sans**: Designed by Santiago Orozco, licensed under the SIL Open Font License (OFL 1.1).
+- **Abril Fatface**: Designed by TypeTogether (Veronika Burian, José Scaglione), licensed under the SIL Open Font License (OFL 1.1).
+- **Pretendard**: Designed by orioncactus (Kil Hyung-jin), licensed under the SIL Open Font License (OFL 1.1).
 - **Playfair Display**: Designed by Claus Eggers Sørensen, licensed under the SIL Open Font License (OFL 1.1).
 - **Lora**: Designed by Cyreal, licensed under the SIL Open Font License (OFL 1.1).
 - **Hahmlet**: Designed by Min-Jae Lu, licensed under the SIL Open Font License (OFL 1.1).
-- **Noto Sans KR**: Designed by Google, licensed under the SIL Open Font License (OFL 1.1).
 - **Special Elite**: Designed by Astigmatic, licensed under the Apache License 2.0.
+- **Stint Ultra Expanded**: Designed by Brian J. Bonislawsky (Astigmatic), licensed under the SIL Open Font License (OFL 1.1).
+- **Noto Sans KR**: Designed by Google, licensed under the SIL Open Font License (OFL 1.1).

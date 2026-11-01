@@ -152,33 +152,43 @@ static func _load_font_file(path: String) -> FontFile:
 	return null
 
 
-## kind: "title" (Stint Ultra Expanded) | "money" (Playfair Display) | "stamp" (Special Elite) | "ui" (Noto Sans KR) | "dialogue" (Lora + Hahmlet)
+## kind: "title" (Josefin Sans) | "money" (Playfair Display / Abril Fatface) | "stamp" (Special Elite) | "ui" (Pretendard) | "dialogue" (Lora + Hahmlet)
 static func font(kind: String, weight: int = 600) -> Font:
 	var key := "%s-%d" % [kind, weight]
 	if _fonts.has(key):
 		return _fonts[key]
+	var pret_path := "res://assets/fonts/Pretendard-SemiBold.ttf" if weight >= 600 else "res://assets/fonts/Pretendard-Regular.ttf"
 	var paths := {
-		"title": "res://assets/fonts/StintUltraExpanded-Regular.ttf",
+		"title": "res://assets/fonts/JosefinSans.ttf",
 		"money": "res://assets/fonts/PlayfairDisplay.ttf",
+		"big_money": "res://assets/fonts/AbrilFatface.ttf",
 		"stamp": "res://assets/fonts/SpecialElite.ttf",
-		"ui": "res://assets/fonts/NotoSansKR.ttf",
+		"ui": pret_path,
 		"dialogue": "res://assets/fonts/Lora.ttf",
 		"story": "res://assets/fonts/Lora.ttf",
 	}
-	var base := _load_font_file(paths.get(kind, paths["ui"]))
+	var base := _load_font_file(paths.get(kind, pret_path))
 	var f: Font
 	if base == null:
 		f = ThemeDB.fallback_font
 	else:
 		var fv := FontVariation.new()
 		fv.base_font = base
-		if kind == "money":
+		if kind in ["money", "big_money"]:
 			fv.opentype_features = {"tnum": 1}
-		if kind == "ui":
-			fv.variation_opentype = {_tag("wght"): weight}
+		if kind == "title":
+			fv.variation_opentype = {_tag("wght"): 700}
+			var hahmlet := _load_font_file("res://assets/fonts/Hahmlet-Subset.ttf")
+			var kr := _load_font_file(pret_path)
+			var fbs: Array[Font] = []
+			if hahmlet != null:
+				fbs.append(hahmlet)
+			if kr != null:
+				fbs.append(kr)
+			fv.fallbacks = fbs
 		elif kind in ["dialogue", "story"]:
 			var hahmlet := _load_font_file("res://assets/fonts/Hahmlet-Subset.ttf")
-			var kr := _load_font_file(paths["ui"])
+			var kr := _load_font_file(pret_path)
 			var fbs: Array[Font] = []
 			if hahmlet != null:
 				fbs.append(hahmlet)
@@ -186,7 +196,7 @@ static func font(kind: String, weight: int = 600) -> Font:
 				fbs.append(kr)
 			fv.fallbacks = fbs
 		elif kind != "ui":
-			var kr := _load_font_file(paths["ui"])
+			var kr := _load_font_file(pret_path)
 			if kr != null:
 				fv.fallbacks = [kr]
 		f = fv

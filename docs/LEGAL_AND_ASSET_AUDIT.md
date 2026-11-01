@@ -51,16 +51,19 @@
 
 ## 3. 서체(Fonts) 라이선스 실사
 
-`assets/fonts/` 내 활성 폰트 6종에 대한 라이선스 점검:
+`assets/fonts/` 내 활성 폰트군에 대한 라이선스 점검:
 
 | 폰트 파일 | 서체명 | 라이선스 형태 | 상업용 판매 가능 여부 | 고지 의무 준수 상태 |
 |---|---|:---:|:---:|:---:|
+| `JosefinSans.ttf` | Josefin Sans (Title) | SIL OFL 1.1 | 가능 (무료) | `CREDITS.md` 명시 완료 |
+| `AbrilFatface.ttf` | Abril Fatface (Jackpot) | SIL OFL 1.1 | 가능 (무료) | `CREDITS.md` 명시 완료 |
+| `Pretendard-*.ttf` | Pretendard (UI / Buttons) | SIL OFL 1.1 | 가능 (무료) | `CREDITS.md` 명시 완료 |
+| `PlayfairDisplay.ttf` | Playfair Display (Money) | SIL OFL 1.1 | 가능 (무료) | `OFL-PlayfairDisplay.txt` 동봉 완료 |
+| `Lora.ttf` | Lora (Dialogue EN) | SIL OFL 1.1 | 가능 (무료) | `CREDITS.md` 명시 완료 |
+| `Hahmlet-Subset.ttf` | Hahmlet (Dialogue KR) | SIL OFL 1.1 | 가능 (무료) | `CREDITS.md` 명시 완료 |
+| `SpecialElite.ttf` | Special Elite (Stamp) | Apache 2.0 | 가능 (무료) | `CREDITS.md` 명시 완료 |
 | `StintUltraExpanded-Regular.ttf` | Stint Ultra Expanded | SIL OFL 1.1 | 가능 (무료) | `CREDITS.md` 명시 완료 |
-| `PlayfairDisplay.ttf` | Playfair Display | SIL OFL 1.1 | 가능 (무료) | `OFL-PlayfairDisplay.txt` 동봉 완료 |
-| `NotoSansKR.ttf` | Noto Sans KR | SIL OFL 1.1 | 가능 (무료) | `OFL-NotoSansKR.txt` 동봉 완료 |
-| `SpecialElite.ttf` | Special Elite | Apache 2.0 | 가능 (무료) | `CREDITS.md` 명시 완료 |
-| `Lora.ttf` | Lora | SIL OFL 1.1 | 가능 (무료) | `CREDITS.md` 명시 완료 |
-| `Hahmlet-Subset.ttf` | Hahmlet | SIL OFL 1.1 | 가능 (무료) | `CREDITS.md` 명시 완료 |
+| `NotoSansKR.ttf` | Noto Sans KR (Fallback) | SIL OFL 1.1 | 가능 (무료) | `OFL-NotoSansKR.txt` 동봉 완료 |
 
 모든 폰트가 상업적 소프트웨어 임베딩 및 재배포를 허용하는 오픈소스 라이선스(SIL OFL 또는 Apache 2.0)이며, 단독 유료 판매를 금지하는 조항을 준수하고 있다.
 
