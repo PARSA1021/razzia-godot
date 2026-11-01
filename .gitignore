@@ -1,5 +1,35 @@
+# Godot 4.x engine cache
 .godot/
 *.translation
+
+# Build and export outputs
 export/
+bin/
+
+# Python cache & artifacts
 __pycache__/
 *.pyc
+*.pyo
+
+# OS and Editor temporary files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.swp
+*.swo
+*~
+*.orig
+
+# IDE & Editor settings
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Runtime / Test isolates
+user/
+test_*
