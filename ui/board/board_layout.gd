@@ -279,16 +279,18 @@ func _layout_landscape(W_: float, H: float, m: float) -> void:
 	var rail_w := 188.0 * u * (1.12 if compact else 1.0)
 	var rx := cx0 + m
 	var ry := 10.0 * u
-	var bh := 40.0 * u
-	bh = 46.0 * u
+	var bh := 38.0 * u
+	var gap_x := 8.0 * u
+	var gap_y := 8.0 * u
 	exit_btn.custom_minimum_size = Vector2(bh, bh)
 	_place(exit_btn, Vector2(rx, ry), Vector2(bh, bh))
-	_place(stat_round, Vector2(rx + bh + 6.0 * u, ry), Vector2(rail_w - bh - 6.0 * u, bh))
-	ry += bh + 6.0 * u
+	_place(stat_round, Vector2(rx + bh + gap_x, ry), Vector2(rail_w - bh - gap_x, bh))
+	ry += bh + gap_y
 	stat_deck.visible = false                    # the deck is a real pile of cards in the table area (landscape)
 	pile.visible = true
-	_place(stat_table, Vector2(rx, ry), Vector2(rail_w, 36.0 * u))
-	ry += 36.0 * u + 12.0 * u
+	var table_h := 38.0 * u
+	_place(stat_table, Vector2(rx, ry), Vector2(rail_w, table_h))
+	ry += table_h + 10.0 * u
 	opp_rail_pos = Vector2(rx, ry)
 	opp_rail_w = rail_w
 	var me_h := 58.0 * u * _chip_k

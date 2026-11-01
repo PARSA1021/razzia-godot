@@ -539,7 +539,7 @@ func _draw_back(w: float, h: float) -> void:
 	var dr := minf(w, h) * 0.26
 	draw_colored_polygon(PackedVector2Array([c + Vector2(0, -dr), c + Vector2(dr * 0.78, 0), c + Vector2(0, dr), c + Vector2(-dr * 0.78, 0)]), Color("120d09"))
 	draw_polyline(PackedVector2Array([c + Vector2(0, -dr), c + Vector2(dr * 0.78, 0), c + Vector2(0, dr), c + Vector2(-dr * 0.78, 0), c + Vector2(0, -dr)]), T.GOLD, maxf(1.0, 1.6 * k))
-	_text("R", Vector2(c.x - dr, c.y + dr * 0.32), T.font("stamp"), dr * 0.95, T.GOLD, dr * 2.0, HORIZONTAL_ALIGNMENT_CENTER)
+	_text("Z", Vector2(c.x - dr, c.y + dr * 0.32), T.font("stamp"), dr * 0.95, T.GOLD, dr * 2.0, HORIZONTAL_ALIGNMENT_CENTER)
 	_caption_band(w, h, w / 52.0 if w < 84.0 else k)
 
 

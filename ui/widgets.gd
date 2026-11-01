@@ -239,14 +239,14 @@ class StatView extends Control:
 		sb.set_corner_radius_all(int(h * 0.18))
 		sb.anti_aliasing = true
 		sb.draw(get_canvas_item(), Rect2(Vector2.ZERO, size))
-		var tf := T.font("title", 600)
+		var tf := T.font("subtitle", 600)
 		var vf := T.font("money", 800)
-		var ts := int(T.fs(h * 0.34, 1.5))
+		var ts := int(T.fs(h * 0.36, 1.4))
 		var vs := int(h * 0.50)
 		var ttl := title
 		var tw := tf.get_string_size(ttl, HORIZONTAL_ALIGNMENT_LEFT, -1, ts).x
 		var vw := vf.get_string_size(value, HORIZONTAL_ALIGNMENT_LEFT, -1, vs).x
-		var gap := h * 0.25
+		var gap := h * 0.22
 		var fit := (size.x - h * 0.5) / maxf(1.0, tw + gap + vw)    # shrink to fit long values ("$150,000")
 		if fit < 0.85 and short_title != "":
 			ttl = short_title                                            # the value is what matters: keep it large
@@ -261,8 +261,8 @@ class StatView extends Control:
 		var x := (size.x - tw - gap - vw) / 2.0
 		T.note_text(self, ts, ttl)
 		T.note_text(self, vs, value)
-		draw_string(tf, Vector2(x, h * 0.64), ttl, HORIZONTAL_ALIGNMENT_LEFT, -1, ts, T.TEXT_DIM)
-		draw_string(vf, Vector2(x + tw + gap, h * 0.70), value, HORIZONTAL_ALIGNMENT_LEFT, -1, vs, T.GOLD)
+		draw_string(tf, Vector2(x, h * 0.65), ttl, HORIZONTAL_ALIGNMENT_LEFT, -1, ts, T.TEXT_DIM)
+		draw_string(vf, Vector2(x + tw + gap, h * 0.69), value, HORIZONTAL_ALIGNMENT_LEFT, -1, vs, T.GOLD)
 
 
 ## One player: avatar, name, money, dealer tag, ready mark.
