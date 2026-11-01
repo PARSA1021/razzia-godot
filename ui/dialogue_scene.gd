@@ -15,6 +15,7 @@ const Settings = preload("res://ui/settings.gd")
 const Audio = preload("res://ui/audio.gd")
 const Portrait = preload("res://ui/portrait.gd")
 const Characters = preload("res://ui/characters.gd")
+const ThemeAssets = preload("res://ui/theme_assets.gd")
 
 signal finished(skipped: bool)
 
@@ -54,8 +55,8 @@ class Dossier extends Control:
 		who = p_who
 		personality = p_pers
 		mouse_filter = Control.MOUSE_FILTER_IGNORE
-		var path := "res://assets/characters_full/%s.png" % who
-		if ResourceLoader.exists(path):
+		var path := ThemeAssets.resolve_art_path("character_full", who)
+		if path != "":
 			_tex = Portrait._tex(path)
 		else:
 			_fallback = Portrait.new()

@@ -273,36 +273,14 @@ static func system_icon(name: String) -> Texture2D:
 	return _load_tex_file(p) if p != "" else null
 
 
-## ---- illustrations (assets/art): venue posters + gambler / police portraits ----
-static var _art := {}
+## ---- illustrations: venue posters + gambler / police portraits (Theme-aware with fallback) ----
+const ThemeAssets = preload("res://ui/theme_assets.gd")
 
 
 ## kind: "bar" (venue poster) | "zocker" (gambler portrait) | "razzia" (police portrait). Returns null when the file is missing,
 ## so every caller keeps its procedural fallback drawing.
 static func art(kind: String, id: String = "") -> Texture2D:
-	var path := ""
-	if kind == "bar":
-		path = "res://assets/art/bars/%s.jpg" % id
-	elif kind == "zocker":
-		path = "res://assets/art/cards/zocker_%s.jpg" % id
-	elif kind == "razzia":
-		if id != "":
-			var club_path := "res://assets/art/cards/razzia_%s.jpg" % id
-			if ResourceLoader.exists(club_path) or FileAccess.file_exists(club_path):
-				path = club_path
-		if path == "":
-			path = "res://assets/art/cards/razzia.jpg"
-	if _art.has(path):
-		return _art[path]
-	var tex: Texture2D = null
-	if FileAccess.file_exists(path):
-		var img := Image.load_from_file(ProjectSettings.globalize_path(path))
-		if img != null:
-			tex = ImageTexture.create_from_image(img)
-	if tex == null and ResourceLoader.exists(path):
-		tex = load(path)
-	_art[path] = tex
-	return tex
+	return ThemeAssets.get_art(kind, id)
 
 
 ## Draws `tex` so that it fills `rect` (cover fit, no distortion). focus_y 0..1 picks which part is kept when cropping vertically.

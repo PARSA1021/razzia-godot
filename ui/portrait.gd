@@ -5,6 +5,7 @@ extends Control
 
 const T = preload("res://ui/tokens.gd")
 const Settings = preload("res://ui/settings.gd")
+const ThemeAssets = preload("res://ui/theme_assets.gd")
 
 const COLORS := {"CONSERVATIVE": Color("4f8fd0"), "OPPORTUNIST": Color("d6b274"), "AGGRESSIVE": Color("c9503f")}
 
@@ -99,20 +100,20 @@ static func paint(ci: CanvasItem, c: Vector2, r: float, pers: String, character:
 	var s := r * 2.0
 	var col: Color = COLORS.get(pers, T.BRASS)
 	var emo: Dictionary = EMOTIONS.get(p_emotion, EMOTIONS["NEUTRAL"])
-	var path := "res://assets/characters/%s.png" % pers
+	var path := ThemeAssets.resolve_art_path("character", pers)
 	if character != "":
-		# big portraits get the whole bust (assets/characters_full), small ones the face close-up (assets/characters)
-		var big := "res://assets/characters_full/%s.png" % character
-		var close := "res://assets/characters/%s.png" % character
-		if r >= 30.0 and ResourceLoader.exists(big):
+		# big portraits get the whole bust (characters_full), small ones the face close-up (characters)
+		var big := ThemeAssets.resolve_art_path("character_full", character)
+		var close := ThemeAssets.resolve_art_path("character", character)
+		if r >= 30.0 and big != "":
 			path = big
-		elif ResourceLoader.exists(close):
+		elif close != "":
 			path = close
 	ci.draw_circle(c, r, Color("1a140d"))
 	if emo["glow"].a > 0.0:
 		ci.draw_circle(c, r * 0.94, emo["glow"])
 	var c_face := c + p_breath_offset
-	if ResourceLoader.exists(path):
+	if path != "":
 		var tex: Texture2D = _tex(path)
 		ci.draw_texture_rect(tex, Rect2(c_face - Vector2(r, r) * 0.92, Vector2(r, r) * 1.84), false)
 		if p_blinking:

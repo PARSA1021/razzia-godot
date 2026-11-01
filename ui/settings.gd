@@ -74,6 +74,7 @@ static var last_game_mode := "CLASSIC"
 static var beginner_hints := false  # 초보자 힌트: 승률·기대값·추천 버튼 노출 여부 (기본값: false)
 static var screen_shake := true     # 화면 흔들림 효과 (false = 흔들림 0)
 static var ai_duel_mode := "COMPACT" # "COMPACT" (축약) | "FULL" (크게 보기)
+static var theme := "noir"          # "noir" (기본 누아르) | "circus" (서커스)
 static var _loaded := false
 
 
@@ -88,6 +89,9 @@ static func load_settings() -> void:
 	language = "ko" if (found or is_test_run()) else I18n.system_default()
 	if found:
 		language = str(cf.get_value("general", "language", "ko"))
+		theme = str(cf.get_value("general", "theme", "noir"))
+		if not theme in ["noir", "circus"]:
+			theme = "noir"
 		player_name = clean_name(str(cf.get_value("general", "player_name", "")))
 		speed_name = str(cf.get_value("anim", "speed", "NORMAL"))
 		if not SPEEDS.has(speed_name):
@@ -129,6 +133,7 @@ static func load_settings() -> void:
 static func save_settings() -> void:
 	var cf := ConfigFile.new()
 	cf.set_value("general", "language", language)
+	cf.set_value("general", "theme", theme)
 	cf.set_value("general", "player_name", player_name)
 	cf.set_value("general", "last_player_count", last_player_count)
 	cf.set_value("general", "last_difficulty", last_difficulty)

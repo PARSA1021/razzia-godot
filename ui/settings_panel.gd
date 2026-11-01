@@ -11,6 +11,7 @@ const T = preload("res://ui/tokens.gd")
 const W = preload("res://ui/widgets.gd")
 const Settings = preload("res://ui/settings.gd")
 const SoundPanel = preload("res://ui/sound_panel.gd")
+const ThemeAssets = preload("res://ui/theme_assets.gd")
 
 
 static func _row(u: float, label_text: String, ctl: Control, translate := true) -> HBoxContainer:
@@ -76,6 +77,10 @@ static func build(u: float, ctx: Dictionary) -> VBoxContainer:
 		Settings.beginner_hints = i == 1
 		Settings.save_settings(), int(15 * u))))
 	if menu:
+		g.add_child(_row(u, "테마", W.segmented(["누아르", "서커스"], 0 if Settings.theme == "noir" else 1, func(i):
+			Settings.theme = "noir" if i == 0 else "circus"
+			ThemeAssets.clear_cache()
+			Settings.save_settings(), int(16 * u))))
 		g.add_child(_row(u, "처음 안내", W.segmented(["ON", "OFF"], 0 if Settings.coach_on else 1, func(i):
 			Settings.coach_on = i == 0
 			Settings.save_settings(), int(16 * u))))
